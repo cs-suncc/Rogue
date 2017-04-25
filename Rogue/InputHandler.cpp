@@ -117,34 +117,45 @@ void InputHandler::update() {
 	if (SDL_NumJoysticks() > 0)
 		return;
 	auto keystates = SDL_GetKeyboardState(nullptr);
+	
 	if (keystates[SDL_SCANCODE_LEFT] && !keystates[SDL_SCANCODE_RIGHT])
 		joystickValues[0].first.setX(-1);
 	else if (!keystates[SDL_SCANCODE_LEFT] && keystates[SDL_SCANCODE_RIGHT])
 		joystickValues[0].first.setX(1);
 	else
 		joystickValues[0].first.setX(0);
+	
 	if (keystates[SDL_SCANCODE_UP] && !keystates[SDL_SCANCODE_DOWN])
 		joystickValues[0].first.setY(-1);
 	else if (!keystates[SDL_SCANCODE_UP] && keystates[SDL_SCANCODE_DOWN])
 		joystickValues[0].first.setY(1);
 	else
 		joystickValues[0].first.setY(0);
+	
 	if (keystates[SDL_SCANCODE_Z])
 		joystickButtonsState[0][XBoxInputNodes::BUTTON_A] = true;
 	else
 		joystickButtonsState[0][XBoxInputNodes::BUTTON_A] = false;
+	
 	if (keystates[SDL_SCANCODE_LSHIFT])
 		joystickZValues[0] = 1.0;
 	else
 		joystickZValues[0] = 0.0;
+
 	if (keystates[SDL_SCANCODE_X])
 		joystickButtonsState[0][XBoxInputNodes::BUTTON_B] = true;
 	else
 		joystickButtonsState[0][XBoxInputNodes::BUTTON_B] = false;
+	
 	if (keystates[SDL_SCANCODE_RETURN])
 		joystickButtonsState[0][XBoxInputNodes::BUTTON_START] = true;
 	else
 		joystickButtonsState[0][XBoxInputNodes::BUTTON_START] = false;
+
+	if (keystates[SDL_SCANCODE_ESCAPE])
+		joystickButtonsState[0][XBoxInputNodes::BUTTON_BACK] = true;
+	else
+		joystickButtonsState[0][XBoxInputNodes::BUTTON_BACK] = false;
 }
 
 void InputHandler::clean() {

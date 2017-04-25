@@ -1,12 +1,7 @@
 #pragma once
 #include <string>
-
-enum GameStates {
-	MAIN_MENU,
-	LOADING,
-	PLAY,
-	PAUSE
-};
+#include <vector>
+#include "GameObject.h"
 
 class GameState {
 public:
@@ -16,5 +11,7 @@ public:
 	virtual bool onEnter() = 0;
 	virtual bool onExit() = 0;
 
-	virtual std::string getStateID() = 0;
+	virtual std::string getStateID() const = 0;
+
+	virtual ~GameState() {}
 };

@@ -29,3 +29,15 @@ void StateMachine::popState()
 		}
 	}
 }
+
+void StateMachine::update()
+{
+	if (!_stack.empty())
+		_stack.top()->update();
+}
+
+void StateMachine::render()
+{
+	if (!_stack.empty())
+		_stack.top()->render();
+}

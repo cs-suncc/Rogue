@@ -4,8 +4,6 @@
 #include <iostream>
 #include "MapLoader.h"
 
-using namespace tinyxml2;
-
 void functional_test_sdl() {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	auto wd = SDL_CreateWindow("SDL Functional test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_SHOWN);
@@ -53,4 +51,18 @@ void functional_test_MapLoader() {
 			}
 		Game::Instance().render();
 	}
+}
+
+void functional_test_state_machine() {
+	Game::Instance().init("MapLoaderTest", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 960, 640);
+	auto tick = 0;
+	while (Game::Instance().running()) {
+		if (SDL_GetTicks() - tick < 34) {
+			continue;
+		}
+		tick = SDL_GetTicks();
+		Game::Instance().update();
+		Game::Instance().render();
+	}
+	//Game::Instance().quit();
 }

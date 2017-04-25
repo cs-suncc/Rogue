@@ -22,6 +22,8 @@ public:
 
 	/// Load a new texture
 	bool load(std::string fileName, std::string id, SDL_Renderer *renderer);
+	/// Unload an existed texture
+	bool unload(std::string id);
 	/// Draw target texture
 	void draw(std::string id, int x, int y, int width, int height, SDL_Renderer *renderer, SDL_RendererFlip flip = SDL_FLIP_NONE);
 	/// Draw selected row * frame of target texture

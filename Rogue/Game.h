@@ -2,9 +2,9 @@
 #include "SDL.h"
 #include "SDL_image.h"
 #include "SDL_mixer.h"
+#include "StateMachine.h"
 #include "SDLGameObject.h"
 #include <vector>
-#include <exception>
 
 class Game {
 private:
@@ -19,6 +19,7 @@ private:
 
 	SDL_Window *window;
 	SDL_Renderer *renderer;
+	StateMachine *gameStateMachine;
 	bool gameRunning;
 	int hottime;
 public:
@@ -34,14 +35,10 @@ public:
 	void render();
 	void update();
 	void clean();
-	std::vector<SDLGameObject *> gameObjects;
-
 	int getHotTime() {
 		return hottime;
 	}
-	void reset() {
-		gameObjects.clear();
-		hottime = 0;
+	StateMachine *getGameStateMachine() {
+		return gameStateMachine;
 	}
-	std::string current_right_aside;
 };

@@ -1,4 +1,3 @@
-#pragma once
 #include "TextureManager.h"
 #include "SDL_image.h"
 #include <iostream>
@@ -18,9 +17,11 @@ bool TextureManager::load(std::string fileName, std::string id, SDL_Renderer* re
 
 	if (nullptr == tmp_surface)
 	{
-		std::cerr << "No such file\n" << std::endl;
+#ifdef _DEBUG
+		std::cerr << "No such file: "<< fileName << std::endl;
 		std::ofstream fout("error.log");
 		fout << SDL_GetError() << std::endl;
+#endif
 		return false;
 	}
 	auto tmp_texture = SDL_CreateTextureFromSurface(renderer, tmp_surface);
@@ -31,6 +32,19 @@ bool TextureManager::load(std::string fileName, std::string id, SDL_Renderer* re
 	//Texture -> textureMap
 	textureMap[id] = tmp_texture;
 	return true;
+}
+
+bool TextureManager::unload(std::string id)
+{
+	if (textureMap.find(id) == textureMap.end()) {
+#ifdef _DEBUG
+		std::cerr << "Texture " << id << "hasn't been loaded" << std::endl;
+#endif
+		return false;
+	}
+	SDL_DestroyTexture(textureMap[id]);
+	textureMap.erase(id);
+	return false;
 }
 
 

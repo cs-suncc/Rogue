@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{A3ACC354-8470-44E0-AE53-9CF58620EC2E}</ProjectGuid>
     <RootNamespace>Rogue</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>7.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -130,7 +130,10 @@
     <ClCompile Include="GameObjectFactory.cpp" />
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="mainmenu.cpp" />
+    <ClCompile Include="MapLoader.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="playing.cpp" />
     <ClCompile Include="SDLGameObject.cpp" />
     <ClCompile Include="StateMachine.cpp" />
     <ClCompile Include="TextureManager.cpp" />
@@ -141,7 +144,9 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameObjectFactory.h" />
     <ClInclude Include="GameState.h" />
+    <ClInclude Include="mainmenu.h" />
     <ClInclude Include="MapLoader.h" />
+    <ClInclude Include="playing.h" />
     <ClInclude Include="StateMachine.h" />
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="LoaderParams.h" />

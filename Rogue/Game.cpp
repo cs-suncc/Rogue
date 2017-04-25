@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "mainmenu.h"
 #include "InputHandler.h"
 #include "TextureManager.h"
 #include "AudioManager.h"
@@ -25,6 +26,8 @@ bool Game::init(const char * title, int x, int y, int width, int height, int fla
 	AudioManager::Instance().initAudio();
 	InputHandler::Instance().initJoysticks();
 	loadAssets();
+	gameStateMachine = new StateMachine();
+	gameStateMachine->pushState(new MainMenuState());
 	gameRunning = true;
 	return true;
 }
@@ -42,19 +45,16 @@ void Game::handleEvents() {
 }
 
 void Game::render() {
+	gameStateMachine->render();
 	SDL_RenderPresent(renderer);
 }
 
-int Gdx = 0, Gdy = -1440;
-
 void Game::update() {
-	SDL_RenderClear(renderer);
-
+	gameStateMachine->update();
 }
 
 void Game::clean() {
 }
 
 void Game::loadAssets() {
-
 }

@@ -30,9 +30,6 @@
     <ClCompile Include="SDLGameObject.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="InputHandler.cpp">
-      <Filter>头文件</Filter>
-    </ClCompile>
     <ClCompile Include="GameObjectFactory.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -43,6 +40,18 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Game.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="mainmenu.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="playing.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="InputHandler.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MapLoader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -84,6 +93,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="MapLoader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="mainmenu.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="playing.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
