@@ -54,7 +54,7 @@ void functional_test_MapLoader() {
 }
 
 void functional_test_state_machine() {
-	Game::Instance().init("MapLoaderTest", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 960, 640);
+	Game::Instance().init("Player Skill Test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 960, 640);
 	auto tick = 0;
 	while (Game::Instance().running()) {
 		if (SDL_GetTicks() - tick < 34) {
