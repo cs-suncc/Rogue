@@ -2,7 +2,7 @@
 #include "SDLGameObject.h"
 #include "LoaderParams.h"
 #include "GameObjectFactory.h"
-
+#include "Vector2.h"
 class Player: public SDLGameObject {
 public:
 	Player();
@@ -10,6 +10,13 @@ public:
 	void draw() override;
 	void update() override;
 	void clean() override;
+private:
+	bool faceflip = false;
+	int hitpoint = 100;
+	int mana = 100;
+	Vector2 velocity;
+	Vector2 accelerate;
+
 };
 
 class PlayerCreator: public BaseCreator {

@@ -3,7 +3,6 @@
 
 extern void functional_test_sdl();
 extern void functional_test_Game();
-extern void functional_test_MapLoader();
 extern void functional_test_state_machine();
 
 int main(int argc, char **args) {

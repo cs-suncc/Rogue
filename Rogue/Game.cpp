@@ -3,6 +3,7 @@
 #include "InputHandler.h"
 #include "TextureManager.h"
 #include "AudioManager.h"
+#include "Player.h"
 #include <iostream>
 #include <exception>
 #include <cmath>
@@ -26,6 +27,8 @@ bool Game::init(const char * title, int x, int y, int width, int height, int fla
 	AudioManager::Instance().initAudio();
 	InputHandler::Instance().initJoysticks();
 	loadAssets();
+	
+	gof.registerType("Player", new PlayerCreator());
 	gameStateMachine = new StateMachine();
 	gameStateMachine->pushState(new MainMenuState());
 	gameRunning = true;

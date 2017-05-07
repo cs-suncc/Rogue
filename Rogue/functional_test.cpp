@@ -3,7 +3,7 @@
 #include "InputHandler.h"
 #include <iostream>
 #include "MapLoader.h"
-
+#define ROGUE_SHOWFPS false
 void functional_test_sdl() {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	auto wd = SDL_CreateWindow("SDL Functional test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_SHOWN);
@@ -33,36 +33,24 @@ void functional_test_Game() {
 	}
 }*/
 
-void functional_test_MapLoader() {
-	Game::Instance().init("MapLoaderTest", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 960, 640);
-	Map mp("asset/test.tmx");
-	SDL_SetRenderDrawColor(Game::Instance().getRenderer(), 227, 227, 227, 255);
-	while (Game::Instance().running()) {
-		SDL_Delay(33);
-		Game::Instance().handleEvents();
-		if (InputHandler::Instance().buttonState(0, XBoxInputNodes::BUTTON_START))
-			Game::Instance().quit();
-		Game::Instance().update();
-		int w = mp.width;
-		int h = mp.height;
-		for (int i = 0; i < h; ++i)
-			for (int j = 0; j < w; ++j) {
-				mp._tile->draw(mp.layer[i][j], 32 * j, 32 * i);
-			}
-		Game::Instance().render();
-	}
-}
-
 void functional_test_state_machine() {
-	Game::Instance().init("Player Skill Test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 960, 640);
+	Game::Instance().init("UI Test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 960, 640);
 	auto tick = 0;
+	auto fpsCounter = 0;
 	while (Game::Instance().running()) {
-		if (SDL_GetTicks() - tick < 34) {
+		if (SDL_GetTicks() - tick < 30) {
 			continue;
 		}
 		tick = SDL_GetTicks();
+		fpsCounter = tick;
 		Game::Instance().update();
 		Game::Instance().render();
+		fpsCounter = SDL_GetTicks() - fpsCounter;
+
+#ifdef _DEBUG
+		if(ROGUE_SHOWFPS)
+			std::cerr << "Max FPS:" << 1000.0 / fpsCounter << std::endl;
+#endif
 	}
 	//Game::Instance().quit();
 }

@@ -41,3 +41,8 @@ void StateMachine::render()
 	if (!_stack.empty())
 		_stack.top()->render();
 }
+
+GameState * StateMachine::currentState()
+{
+	return _stack.top();
+}

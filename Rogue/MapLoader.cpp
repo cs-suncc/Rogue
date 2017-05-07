@@ -1,6 +1,10 @@
 #include "MapLoader.h"
 
+auto EmptyTile = new Tile(0x7ff, false);
+
 Map::Map(std::string map): map(map) {
+	view_left = 0;
+	view_right = 32 * 30 + 1;
 	root = new tinyxml2::XMLDocument();
 	root->LoadFile(map.c_str());
 	height = atoi(root->FirstChildElement("map")->Attribute("height"));
@@ -41,4 +45,25 @@ Map::Map(std::string map): map(map) {
 			std::cout << layer[i][j] << ' ';
 		}
 #endif
+}
+
+Tile *Map::getTile(int line, int column)
+{
+	if (line >= height || line < 0 || column >= width || column < 0)
+		return EmptyTile;
+	auto id = layer[line][column];
+	return  _tile->getTile(id - 1);
+}
+
+void Map::draw()
+{
+	for (auto i = 0; i < height; ++i) {
+		int x = 0;
+		for (auto j = view_left; j < view_right; j += 32) {
+			auto id = layer[i][j / 32];
+			_tile->draw(id, x * 32, i * 32);
+			++x;
+		}
+	}
+
 }

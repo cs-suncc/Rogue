@@ -52,11 +52,25 @@ private:
 class Map {
 public:
 	Map(std::string map);
-	int width, height;
-	int **layer;
-	Tileset *_tile;
+	int **getLayer() {
+		return layer;
+	}
+	Tile *getTile(int line, int column);
+	void getViewPort(int *left, int *right) {
+		*left = view_left;
+		*right = view_right;
+	}
+	void viewport(int left, int right) {
+		view_left = left;
+		view_right = right;
+	}
+	void draw();
 private:
 	std::string map;
-
+	int **layer;
 	tinyxml2::XMLDocument *root;
+	Tileset *_tile;
+	int view_left;
+	int view_right;
+	int width, height;
 };

@@ -10,6 +10,7 @@ public:
 	void popState();
 	void update();
 	void render();
+	GameState *currentState();
 private:
 	std::stack<GameState *> _stack;
 };

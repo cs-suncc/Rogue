@@ -132,6 +132,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mainmenu.cpp" />
     <ClCompile Include="MapLoader.cpp" />
+    <ClCompile Include="MapManager.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="playing.cpp" />
     <ClCompile Include="SDLGameObject.cpp" />
@@ -146,6 +147,7 @@
     <ClInclude Include="GameState.h" />
     <ClInclude Include="mainmenu.h" />
     <ClInclude Include="MapLoader.h" />
+    <ClInclude Include="MapManager.h" />
     <ClInclude Include="playing.h" />
     <ClInclude Include="StateMachine.h" />
     <ClInclude Include="InputHandler.h" />

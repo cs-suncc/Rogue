@@ -4,6 +4,7 @@
 #include "SDL_mixer.h"
 #include "StateMachine.h"
 #include "SDLGameObject.h"
+#include "GameObjectFactory.h"
 #include <vector>
 
 class Game {
@@ -22,6 +23,7 @@ private:
 	StateMachine *gameStateMachine;
 	bool gameRunning;
 	int hottime;
+	GameObjectFactory gof;
 public:
 	inline static Game &Instance() {
 		static Game singleton;	//Singleton
@@ -40,5 +42,8 @@ public:
 	}
 	StateMachine *getGameStateMachine() {
 		return gameStateMachine;
+	}
+	GameObjectFactory &factories() {
+		return gof;
 	}
 };
