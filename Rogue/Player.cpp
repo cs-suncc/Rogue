@@ -4,6 +4,7 @@
 #include "InputHandler.h"
 #include "MapManager.h"
 #include "playing.h"
+#include "UI.h"
 #include <cmath>
 #ifdef _DEBUG
 #include <iostream>
@@ -22,6 +23,10 @@ Player::Player():
 
 void Player::load(const LoaderParams &param) {
 	SDLGameObject::load(param);
+	UI::Instance().newUI("PlayerHP", "Bar", 0, 0, 350, 15, hitpoint);
+	UI::Instance().setUIBarColor("PlayerHP", 200, 50, 50);
+	UI::Instance().newUI("PlayerMana", "Bar", 0, 15 + 1, 200, 10, mana);
+	UI::Instance().setUIBarColor("PlayerMana", 100, 50, 200);
 }
 
 void Player::draw() {
@@ -94,10 +99,10 @@ void Player::update() {
 
 		if (xaxis > 0) {
 			faceflip = false;
-			velocity.setX(7.0);
+			velocity.setX(3.0);
 		} else if (xaxis < 0) {
 			faceflip = true;
-			velocity.setX(-7.0);
+			velocity.setX(-3.0);
 		} else if (xaxis == 0) {
 			//velocity.setX(0);
 		}
@@ -191,5 +196,6 @@ void Player::update() {
 }
 
 void Player::clean() {
-
+	UI::Instance().destroyUI("PlayerHP");
+	UI::Instance().destroyUI("PlayerMana");
 }

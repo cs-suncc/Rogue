@@ -7,6 +7,7 @@
 #include "Player.h"
 #include "GameObjectFactory.h"
 #include "MapManager.h"
+#include "UI.h"
 
 const std::string PlayingState::playingID = "MAINMENU";
 
@@ -22,18 +23,22 @@ void PlayingState::update() {
 }
 
 void PlayingState::render() {
+	SDL_SetRenderDrawColor(Game::Instance().getRenderer(), 227, 227, 227, 255);
 	SDL_RenderClear(Game::Instance().getRenderer());
 	MapManager::Instance().getMap(currentMap)->draw();
 	for (auto obj : gameObjects) {
 		obj->draw();
 	}
+	UI::Instance().draw();
 }
 
 bool PlayingState::onEnter() {
 	MapManager::Instance().loadMap("TESTMAP", "asset/test.tmx");
 	currentMap = "TESTMAP";
 	TextureManager::Instance().load("asset/image/rogue2.png", "PLAYER", Game::Instance().getRenderer());
+
 	SDL_SetRenderDrawColor(Game::Instance().getRenderer(), 227, 227, 227, 255);
+
 	auto *player = (Player *)Game::Instance().factories().create("Player");
 	player->load(LoaderParams(0 * 32, 13 * 32, 32, 64, "PLAYER"));
 	player->setCurrentRow(0);
