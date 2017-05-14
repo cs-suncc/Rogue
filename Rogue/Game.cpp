@@ -4,6 +4,7 @@
 #include "TextureManager.h"
 #include "AudioManager.h"
 #include "Player.h"
+#include "Bullet.h"
 #include <iostream>
 #include <exception>
 #include <cmath>
@@ -29,6 +30,9 @@ bool Game::init(const char * title, int x, int y, int width, int height, int fla
 	loadAssets();
 	
 	gof.registerType("Player", new PlayerCreator());
+	gof.registerType("PlayerBullet", new PlayerBulletCreator());
+	gof.registerType("PlayerMagicBullet", new PlayerMagicBulletCreator());
+
 	gameStateMachine = new StateMachine();
 	gameStateMachine->pushState(new MainMenuState());
 	gameRunning = true;

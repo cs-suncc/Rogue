@@ -14,6 +14,7 @@ enum PlayerState {
 	MOVING,
 	JUMPING,
 	ATTACKING,
+	SPELLING,
 	DEFENDING
 };
 
@@ -43,17 +44,26 @@ void Player::draw() {
 
 void Player::update() {
 	static PlayerState currentState = MOVING;
-	int xaxis = InputHandler::Instance().xValue(0, XBoxInputNodes::LEFT_JOYSTICK);
-	int yaxis = InputHandler::Instance().yValue(0, XBoxInputNodes::LEFT_JOYSTICK);
+	auto xaxis = InputHandler::Instance().xValue(0, XBoxInputNodes::LEFT_JOYSTICK);
+	auto yaxis = InputHandler::Instance().yValue(0, XBoxInputNodes::LEFT_JOYSTICK);
+	auto buttonA = InputHandler::Instance().buttonState(0, XBoxInputNodes::BUTTON_A);
+	auto buttonB = InputHandler::Instance().buttonState(0, XBoxInputNodes::BUTTON_B);
 	auto currentMap = MapManager::Instance().getMap(
-		((PlayingState *)Game::Instance().getGameStateMachine()->currentState())->getCurrentMap()
+		static_cast<PlayingState *>(Game::Instance().getGameStateMachine()->currentState())->getCurrentMap()
 	);
+	auto _state = static_cast<PlayingState *>(Game::Instance().getGameStateMachine()->currentState());
+
+	if (fabs(velocity.getX() - 0) < 1e-6 && fabs(velocity.getY() - 0) < 1e-6) {
+		mana = mana + 1 > 100 ? 100 : mana + 1;
+		UI::Instance().setUIValue("PlayerMana", mana);
+	}
+
 	switch (currentState) {
 	case MOVING:
 #ifdef _DEBUG
 		//std::cerr << "In MOVING " <<velocity.getX()<<" "<<velocity.getY()<< std::endl;
 #endif // _DEBUG
-		if (yaxis > 0) {	//=> DEFENDING
+		if (yaxis > 0 && mana >= 10) {	//=> DEFENDING
 			setCurrentRow(3);
 			setCurrentFrame(0);
 			velocity.setX(0);
@@ -66,6 +76,22 @@ void Player::update() {
 			velocity.setY(-10);
 			accelerate.setY(1);
 			currentState = JUMPING;
+			break;
+		}
+		//¹¥»÷
+		if (buttonA) {	//=> ATTACKING
+			setCurrentRow(2);
+			setCurrentFrame(0);
+			currentState = ATTACKING;
+			break;
+		}
+		//Ä§·¨¹¥»÷
+		if (buttonB && mana >= 40) {	//=> SPELLING
+			setCurrentRow(2);
+			setCurrentFrame(0);
+			mana -= 40;
+			UI::Instance().setUIValue("PlayerMana", mana);
+			currentState = SPELLING;
 			break;
 		}
 		if (xaxis > 0) {
@@ -108,6 +134,17 @@ void Player::update() {
 		}
 		break;
 	case DEFENDING:
+		if (mana < 2) {
+			mana = 0;
+			UI::Instance().setUIValue("PlayerMana", mana);
+			currentFrame = 0;
+			currentRow = 0;
+			currentState = MOVING;
+			break;
+		} else {
+			mana -= 2;
+			UI::Instance().setUIValue("PlayerMana", mana);
+		}
 		if (yaxis > 0) {
 			setCurrentFrame((currentFrame + 1) % 4);
 		} else {
@@ -115,6 +152,59 @@ void Player::update() {
 			setCurrentFrame(0);
 			currentState = MOVING;
 		}
+		if (currentMap->getTile((y + 32) / 32, (x + 11) / 32)->passable()) {
+			accelerate.setY(1);
+		} else {
+			accelerate.setY(0);
+		}
+		break;
+	case ATTACKING:
+		if (currentFrame == 3) {
+			auto b = static_cast<PlayerBullet *>(Game::Instance().factories().create("PlayerBullet"));
+			b->setX(x + 20 * (faceflip ? 0 : 1));
+			b->setY(y - 5);
+			if (faceflip) {
+				b->flip();
+			}
+			b->setVelocity(Vector2(24 * (faceflip ? -1 : 1), 0));
+			_state->addBullet(b);
+			currentFrame = 0;
+			currentRow = 0;
+			currentState = MOVING;
+			break;
+		} else {
+			++currentFrame;
+		}
+		//×¹Âä
+		if (currentMap->getTile((y + 32) / 32, (x + 11) / 32)->passable()) {
+			accelerate.setY(1);
+		} else {
+			accelerate.setY(0);
+		}
+		break;
+	case SPELLING:
+		if (fabs(velocity.getX() - 0) > 1e-6 || fabs(velocity.getY() - 0) > 1e-6) {
+			mana = mana + 40 > 100 ? 100 : mana + 40;
+			UI::Instance().setUIValue("PlayerMana", mana);
+			currentFrame = 0;
+			currentRow = 0;
+			currentState = MOVING;
+			break;
+		}
+		if (currentFrame == 3) {
+			auto b = static_cast<PlayerMagicBullet *>(Game::Instance().factories().create("PlayerMagicBullet"));
+			b->setX(x + 20 * (faceflip ? 0 : 1));
+			b->setY(y - 5);
+			b->setVelocity(Vector2(10 * (faceflip ? -1 : 1), 0));
+			_state->addBullet(b);
+			currentFrame = 0;
+			currentRow = 0;
+			currentState = MOVING;
+			break;
+		} else {
+			++currentFrame;
+		}
+		//×¹Âä
 		if (currentMap->getTile((y + 32) / 32, (x + 11) / 32)->passable()) {
 			accelerate.setY(1);
 		} else {

@@ -9,7 +9,7 @@
 #include "MapManager.h"
 #include "UI.h"
 
-const std::string PlayingState::playingID = "MAINMENU";
+const std::string PlayingState::playingID = "PLAYING";
 
 void PlayingState::update() {
 	InputHandler::Instance().update();
@@ -20,6 +20,9 @@ void PlayingState::update() {
 	for (auto obj : gameObjects) {
 		obj->update();
 	}
+	for (auto blt : bullets) {
+		blt->update();
+	}
 }
 
 void PlayingState::render() {
@@ -29,6 +32,9 @@ void PlayingState::render() {
 	for (auto obj : gameObjects) {
 		obj->draw();
 	}
+	for (auto blt : bullets) {
+		blt->draw();
+	}
 	UI::Instance().draw();
 }
 
@@ -36,6 +42,7 @@ bool PlayingState::onEnter() {
 	MapManager::Instance().loadMap("TESTMAP", "asset/test.tmx");
 	currentMap = "TESTMAP";
 	TextureManager::Instance().load("asset/image/rogue2.png", "PLAYER", Game::Instance().getRenderer());
+	TextureManager::Instance().load("asset/image/bullet.png", "BULLET", Game::Instance().getRenderer());
 
 	SDL_SetRenderDrawColor(Game::Instance().getRenderer(), 227, 227, 227, 255);
 
@@ -52,9 +59,13 @@ bool PlayingState::onExit() {
 		obj->clean();
 	}
 	gameObjects.clear();
-#ifdef __DEBUG
+#ifdef _DEBUG
 	std::cerr << "Playing state - EXIT" << std::endl;
 #endif
 
 	return true;
+}
+
+void PlayingState::addBullet(Bullet * blt) {
+	bullets.push_back(blt);
 }

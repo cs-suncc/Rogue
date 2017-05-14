@@ -1,14 +1,20 @@
 #include "UI.h"
+#ifdef _DEBUG
+#include<iostream>
+#endif
 
 void UIBar::draw()
 {
-	int width = w * (value / value_max) - 2;
+	int width = w * (1.0 * value / value_max) - 2;
+#ifdef _DEBUG
+	//std::cerr << "UI Bar<" << value_max << "> : width : " << width << std::endl;
+#endif
 	auto renderer = Game::Instance().getRenderer();
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 	SDL_Rect rect = { x, y, w, h };
 	SDL_RenderDrawRect(renderer, &rect);
 	SDL_SetRenderDrawColor(Game::Instance().getRenderer(), r, g, b, 255);
-	rect = { x + 1, y + 1, w - 2, h - 2 };
+	rect = { x + 1, y + 1, width, h - 2 };
 	SDL_RenderFillRect(renderer, &rect);
 }
 
