@@ -13,9 +13,11 @@ void UIBar::draw()
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 	SDL_Rect rect = { x, y, w, h };
 	SDL_RenderDrawRect(renderer, &rect);
-	SDL_SetRenderDrawColor(Game::Instance().getRenderer(), r, g, b, 255);
-	rect = { x + 1, y + 1, width, h - 2 };
-	SDL_RenderFillRect(renderer, &rect);
+	if (value > 0) {
+		SDL_SetRenderDrawColor(Game::Instance().getRenderer(), r, g, b, 255);
+		rect = { x + 1, y + 1, width, h - 2 };
+		SDL_RenderFillRect(renderer, &rect);
+	}
 }
 
 UIBar::UIBar(int x, int y, int w, int h, int value_max)

@@ -44,7 +44,8 @@ void Player::draw() {
 }
 
 void Player::update() {
-	static PlayerState currentState = MOVING;
+	static auto currentState = MOVING;
+	static auto fromState = MOVING;
 	auto xaxis = InputHandler::Instance().xValue(0, XBoxInputNodes::LEFT_JOYSTICK);
 	auto yaxis = InputHandler::Instance().yValue(0, XBoxInputNodes::LEFT_JOYSTICK);
 	auto buttonA = InputHandler::Instance().buttonState(0, XBoxInputNodes::BUTTON_A);
@@ -90,6 +91,7 @@ void Player::update() {
 			setCurrentRow(2);
 			setCurrentFrame(0);
 			currentState = ATTACKING;
+			fromState = MOVING;
 			break;
 		}
 		//Ä§·¨¹¥»÷
@@ -143,6 +145,7 @@ void Player::update() {
 			setCurrentRow(2);
 			setCurrentFrame(0);
 			currentState = ATTACKING;
+			fromState = JUMPING;
 			break;
 		}
 		break;
@@ -184,7 +187,7 @@ void Player::update() {
 			AudioManager::Instance().playSound("PLAYERATTACK");
 			currentFrame = 0;
 			currentRow = 0;
-			currentState = MOVING;
+			currentState = fromState;
 			break;
 		} else {
 			++currentFrame;

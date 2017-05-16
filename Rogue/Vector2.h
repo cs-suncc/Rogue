@@ -99,6 +99,9 @@ public:
 		m_y /= scalar;
 		return *this;
 	}
+	const double dot(const Vector2 &v) const {
+		return m_x*v.m_x + m_y*v.m_y;
+	}
 
 private:
 	double m_x;

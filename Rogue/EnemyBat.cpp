@@ -30,6 +30,11 @@ void EnemyBat::update()
 	static auto moving_frame = 0;
 	static auto next_frame = 0;
 	static auto currentState = STALL;
+	if (hitpoint <= 0) {
+		dying = true;
+		// Tmp
+		return;
+	}
 	if (dying) {
 		currentState = DYING;
 	}

@@ -7,6 +7,8 @@
 #include "GameObjectFactory.h"
 #include <vector>
 
+bool collision(SDL_Rect r1, SDL_Rect r2);
+
 class Game {
 private:
 	Game() :window(nullptr), renderer(nullptr), gameRunning(false), hottime(0) {}

@@ -47,15 +47,20 @@ public:
 	int getY() {
 		return y;
 	}
+	int getDamage() {
+		return damage;
+	}
 protected:
 	Vector2 velocity;
 	Vector2 accelerate;
+	int damage = 0;
 };
 
 class PlayerMagicBullet : public Bullet {
 public:
 	PlayerMagicBullet() {
 		load(LoaderParams(0, 0, 32, 32, "BULLET"));
+		damage = 100;
 	}
 	virtual void load(const LoaderParams &param) override;
 };
@@ -71,6 +76,7 @@ class PlayerBullet : public Bullet {
 public:
 	PlayerBullet() {
 		load(LoaderParams(0, 0, 32, 32, "BULLET"));
+		damage = 15;
 	}
 	virtual void load(const LoaderParams &param) override;
 	void flip() {

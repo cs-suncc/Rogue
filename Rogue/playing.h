@@ -2,6 +2,8 @@
 #include "GameState.h"
 #include "MapLoader.h"
 #include "Bullet.h"
+#include "Enemy.h"
+#include "Player.h"
 
 class PlayingState : public GameState {
 public:
@@ -18,8 +20,9 @@ public:
 	void addBullet(Bullet *);
 private:
 	static const std::string playingID;
-	std::vector<GameObject *> gameObjects;
+	Player *player;
 	std::vector<Bullet *> bullets;
+	std::vector<Enemy *> enemys;
 	int viewport;
 	std::string currentMap;
 };

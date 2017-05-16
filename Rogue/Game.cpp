@@ -67,3 +67,24 @@ void Game::clean() {
 
 void Game::loadAssets() {
 }
+
+static bool inRect(int x, int y, SDL_Rect r) {
+	return x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h;
+}
+
+bool collision(SDL_Rect r1, SDL_Rect r2)
+{
+	bool inside =
+		inRect(r1.x, r1.y, r2) || inRect(r1.x + r1.w, r1.y, r2) ||
+		inRect(r1.x, r1.y + r1.h, r2) || inRect(r1.x + r1.w, r1.y + r1.h, r2) ||
+		inRect(r2.x, r2.y, r1) || inRect(r2.x + r2.w, r2.y, r1) ||
+		inRect(r2.x, r2.y + r2.h, r1) || inRect(r2.x + r2.w, r2.y + r1.h, r1);
+	if (inside)
+		return true;
+	//through
+	Vector2 x1(r1.x, r1.y + 0.5*r1.h), x2(r1.x + r1.w, r1.y + 0.5*r1.h);
+	Vector2 y1(r2.x + 0.5*r2.w, r2.y), y2(r2.x + 0.5*r2.w, r2.y + r2.h);
+	return
+		(x2 - x1).dot(y1 - x1) * (x2 - x1).dot(y2 - x1) < 0 &&
+		(y2 - y1).dot(x1 - y1) * (y2 - y1).dot(x2 - y1) < 0;
+}

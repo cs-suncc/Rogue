@@ -41,6 +41,9 @@ public:
 	void setY(int _y) {
 		y = _y;
 	}
+	bool perish() {
+		return dying;
+	}
 protected:
 	int hitpoint = 0;
 	int hitpoint_max = 0;
