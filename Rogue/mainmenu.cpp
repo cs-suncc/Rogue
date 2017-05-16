@@ -5,6 +5,7 @@
 #include "InputHandler.h"
 #include "Game.h"
 #include "SDLGameObject.h"
+#include "AudioManager.h"
 
 const std::string MainMenuState::menuID = "MAINMENU";
 
@@ -27,12 +28,14 @@ void MainMenuState::render() {
 
 bool MainMenuState::onEnter() {
 	auto f = TextureManager::Instance().load("asset/image/title.png", "TITLE", Game::Instance().getRenderer());
+	AudioManager::Instance().loadMusic("asset/audio/Title.mp3", "TITLEBGM");
 	if (!f) {
 		return false;
 	}
 	auto p = new SDLGameObject();
 	p->load(LoaderParams(0, 0, 960, 640, "TITLE"));
 	gameObjects.push_back(p);
+	AudioManager::Instance().playMusic("TITLEBGM");
 	return true;
 }
 

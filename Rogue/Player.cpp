@@ -5,6 +5,7 @@
 #include "MapManager.h"
 #include "playing.h"
 #include "UI.h"
+#include "AudioManager.h"
 #include <cmath>
 #ifdef _DEBUG
 #include <iostream>
@@ -54,8 +55,13 @@ void Player::update() {
 	auto _state = static_cast<PlayingState *>(Game::Instance().getGameStateMachine()->currentState());
 
 	if (fabs(velocity.getX() - 0) < 1e-6 && fabs(velocity.getY() - 0) < 1e-6) {
-		mana = mana + 1 > 100 ? 100 : mana + 1;
+		mana = mana + 1 > ManaMax ? ManaMax : mana + 1;
 		UI::Instance().setUIValue("PlayerMana", mana);
+		if (mana < 70) {
+			UI::Instance().setUIBarColor("PlayerMana", 255, 50, 50);
+		} else {
+			UI::Instance().setUIBarColor("PlayerMana", 100, 50, 200);
+		}
 	}
 
 	switch (currentState) {
@@ -63,11 +69,12 @@ void Player::update() {
 #ifdef _DEBUG
 		//std::cerr << "In MOVING " <<velocity.getX()<<" "<<velocity.getY()<< std::endl;
 #endif // _DEBUG
-		if (yaxis > 0 && mana >= 10) {	//=> DEFENDING
+		if (yaxis > 0 && mana >= 70) {	//=> DEFENDING
 			setCurrentRow(3);
 			setCurrentFrame(0);
 			velocity.setX(0);
 			currentState = DEFENDING;
+			AudioManager::Instance().playSound("PLAYERDEFENDING");
 			break;
 		}
 		if (yaxis < 0) {	//=> JUMPING
@@ -168,6 +175,7 @@ void Player::update() {
 			}
 			b->setVelocity(Vector2(24 * (faceflip ? -1 : 1), 0));
 			_state->addBullet(b);
+			AudioManager::Instance().playSound("PLAYERATTACK");
 			currentFrame = 0;
 			currentRow = 0;
 			currentState = MOVING;
@@ -184,7 +192,7 @@ void Player::update() {
 		break;
 	case SPELLING:
 		if (fabs(velocity.getX() - 0) > 1e-6 || fabs(velocity.getY() - 0) > 1e-6) {
-			mana = mana + 40 > 100 ? 100 : mana + 40;
+			mana = mana + 40 > ManaMax ? ManaMax : mana + 40;
 			UI::Instance().setUIValue("PlayerMana", mana);
 			currentFrame = 0;
 			currentRow = 0;
@@ -197,6 +205,7 @@ void Player::update() {
 			b->setY(y - 5);
 			b->setVelocity(Vector2(10 * (faceflip ? -1 : 1), 0));
 			_state->addBullet(b);
+			AudioManager::Instance().playSound("PLAYERMAGIC");
 			currentFrame = 0;
 			currentRow = 0;
 			currentState = MOVING;

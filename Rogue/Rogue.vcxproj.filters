@@ -125,5 +125,8 @@
     <ClInclude Include="Bullet.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

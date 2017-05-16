@@ -7,6 +7,7 @@
 #include "Player.h"
 #include "GameObjectFactory.h"
 #include "MapManager.h"
+#include "AudioManager.h"
 #include "UI.h"
 
 const std::string PlayingState::playingID = "PLAYING";
@@ -15,6 +16,7 @@ void PlayingState::update() {
 	InputHandler::Instance().update();
 	if (InputHandler::Instance().buttonState(0, XBoxInputNodes::BUTTON_BACK)) {
 		Game::Instance().getGameStateMachine()->popState();
+		AudioManager::Instance().playMusic("TITLEBGM");
 		return;
 	}
 	for (auto obj : gameObjects) {
@@ -43,6 +45,10 @@ bool PlayingState::onEnter() {
 	currentMap = "TESTMAP";
 	TextureManager::Instance().load("asset/image/rogue2.png", "PLAYER", Game::Instance().getRenderer());
 	TextureManager::Instance().load("asset/image/bullet.png", "BULLET", Game::Instance().getRenderer());
+	AudioManager::Instance().loadMusic("asset/audio/dungeon.mp3", "PLAYINGBGM");
+	AudioManager::Instance().loadSound("asset/audio/PlayerAttack.mp3", "PLAYERATTACK");
+	AudioManager::Instance().loadSound("asset/audio/PlayerMagic.mp3", "PLAYERMAGIC");
+	AudioManager::Instance().loadSound("asset/audio/PlayerDefending.mp3", "PLAYERDEFENDING");
 
 	SDL_SetRenderDrawColor(Game::Instance().getRenderer(), 227, 227, 227, 255);
 
@@ -51,6 +57,7 @@ bool PlayingState::onEnter() {
 	player->setCurrentRow(0);
 	player->setCurrentFrame(0);
 	gameObjects.push_back(player);
+	AudioManager::Instance().playMusic("PLAYINGBGM");
 	return true;
 }
 

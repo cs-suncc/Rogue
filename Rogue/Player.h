@@ -13,7 +13,8 @@ public:
 private:
 	bool faceflip = false;
 	int hitpoint = 100;
-	int mana = 100;
+	int ManaMax = 200;
+	int mana = 200;
 	Vector2 velocity;
 	Vector2 accelerate;
 
