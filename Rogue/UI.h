@@ -23,6 +23,7 @@ public:
 		return singleton;
 	}
 	void newUI(std::string id, std::string type, int x, int y, int w, int h, int value_max);
+	bool hasUI(std::string id);
 	void destroyUI(std::string id);
 	void setUIValue(std::string id, int value);
 	void setUIValueMax(std::string id, int value_max);

@@ -16,6 +16,14 @@ void UI::newUI(std::string id, std::string type, int x, int y, int w, int h, int
 	}
 }
 
+bool UI::hasUI(std::string id)
+{
+	if (uis.find(id) == uis.end())
+		return false;
+	else
+		return true;
+}
+
 void UI::destroyUI(std::string id)
 {
 	if (uis.find(id) == uis.end()) {

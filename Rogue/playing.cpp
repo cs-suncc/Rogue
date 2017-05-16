@@ -8,6 +8,7 @@
 #include "GameObjectFactory.h"
 #include "MapManager.h"
 #include "AudioManager.h"
+#include "Enemy.h"
 #include "UI.h"
 
 const std::string PlayingState::playingID = "PLAYING";
@@ -45,6 +46,7 @@ bool PlayingState::onEnter() {
 	currentMap = "TESTMAP";
 	TextureManager::Instance().load("asset/image/rogue2.png", "PLAYER", Game::Instance().getRenderer());
 	TextureManager::Instance().load("asset/image/bullet.png", "BULLET", Game::Instance().getRenderer());
+	TextureManager::Instance().load("asset/image/EnemyBat.png", "ENEMYBAT", Game::Instance().getRenderer());
 	AudioManager::Instance().loadMusic("asset/audio/dungeon.mp3", "PLAYINGBGM");
 	AudioManager::Instance().loadSound("asset/audio/PlayerAttack.mp3", "PLAYERATTACK");
 	AudioManager::Instance().loadSound("asset/audio/PlayerMagic.mp3", "PLAYERMAGIC");
@@ -57,6 +59,12 @@ bool PlayingState::onEnter() {
 	player->setCurrentRow(0);
 	player->setCurrentFrame(0);
 	gameObjects.push_back(player);
+	auto *bat = static_cast<EnemyBat *>(Game::Instance().factories().create("EnemyBat"));
+	bat->setMaxHitpoint(40);
+	bat->setHitpoint(40);
+	bat->setX(23 * 32);
+	bat->setY(8 * 32);
+	gameObjects.push_back(bat);
 	AudioManager::Instance().playMusic("PLAYINGBGM");
 	return true;
 }

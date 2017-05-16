@@ -139,6 +139,12 @@ void Player::update() {
 		} else if (xaxis == 0) {
 			//velocity.setX(0);
 		}
+		if (buttonA) {	//=> ATTACKING
+			setCurrentRow(2);
+			setCurrentFrame(0);
+			currentState = ATTACKING;
+			break;
+		}
 		break;
 	case DEFENDING:
 		if (mana < 2) {

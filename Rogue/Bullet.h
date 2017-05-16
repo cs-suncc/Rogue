@@ -47,7 +47,7 @@ public:
 	int getY() {
 		return y;
 	}
-private:
+protected:
 	Vector2 velocity;
 	Vector2 accelerate;
 };
