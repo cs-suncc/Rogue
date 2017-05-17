@@ -1,5 +1,20 @@
 #include "Bullet.h"
 #include "Game.h"
+#include "AudioManager.h"
+#include "MapManager.h"
+#include "playing.h"
+
+void PlayerMagicBullet::playHitSound() {
+	AudioManager::Instance().playSound("MAGICHIT");
+}
+
+void PlayerMagicBullet::update() {
+	auto mp = MapManager::Instance().getMap(static_cast<PlayingState *>(
+		Game::Instance().getGameStateMachine()->currentState())->getCurrentMap());
+	if (!mp->getTile((y + 5) / 32, (x + 5) / 32)->passable())
+		destroy = true;
+	Bullet::update();
+}
 
 void PlayerMagicBullet::load(const LoaderParams & param) {
 	x = param.getX();
@@ -21,7 +36,23 @@ void PlayerBullet::load(const LoaderParams & param) {
 	currentFrame = 0;
 }
 
+void PlayerBullet::update()
+{
+	auto mp = MapManager::Instance().getMap(static_cast<PlayingState *>(
+		Game::Instance().getGameStateMachine()->currentState())->getCurrentMap());
+	if (!mp->getTile((y + 5) / 32, (x + 5) / 32)->passable())
+		destroy = true;
+	if (livetime++ > 10) {
+		destroy = true;
+	}
+	Bullet::update();
+}
+
 void PlayerBullet::draw() {
 	TextureManager::Instance().drawFrame(textureID, x, y, width, height, currentRow, currentFrame, Game::Instance().getRenderer(),
 		_flip ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
+}
+
+void PlayerBullet::playHitSound() {
+	AudioManager::Instance().playSound("ATTACKHIT");
 }

@@ -14,34 +14,71 @@
 const std::string PlayingState::playingID = "PLAYING";
 
 void PlayingState::update() {
+	static int dying_noupdate = 0;
+	static bool on_counting = false;
 	InputHandler::Instance().update();
 	if (InputHandler::Instance().buttonState(0, XBoxInputNodes::BUTTON_BACK)) {
 		Game::Instance().getGameStateMachine()->popState();
 		AudioManager::Instance().playMusic("TITLEBGM");
 		return;
 	}
+	if (player->getHitpoint() <= 0) {
+		Game::Instance().getGameStateMachine()->popState();
+		AudioManager::Instance().playMusic("TITLEBGM");
+		return;
+	}
 	player->update();
-	for (auto blt : bullets) {
-		blt->update();
+	for (auto blt = bullets.begin(); blt != bullets.end();) {
+		(*blt)->update();
+		if ((*blt)->perish()) {
+			blt = bullets.erase(blt);
+		} else {
+			++blt;
+		}
 	}
 	for (auto enm = enemys.begin(); enm != enemys.end();) {
 		(*enm)->update();
 		if ((*enm)->perish()) {
 			enm = enemys.erase(enm);
+			on_counting = true;
 		} else {
 			++enm;
 		}
 	}
+	if (on_counting && dying_noupdate > 60) {
+		UI::Instance().destroyUI("EnemyBar");
+		dying_noupdate = 0;
+		on_counting = false;
+	}
 	//处理伤害
-		//todo
+	if (!player->immutable()) {
+		for (auto enmp : enemys) {
+			if (collision({ player->getX() + 5, player->getY() - 20, 20, 50 }, enmp->getBox())) {
+				if (player->isDefending()) {
+					player->setHitpoint(player->getHitpoint() - 5);
+					UI::Instance().setUIValue("PlayerHP", player->getHitpoint());
+					player->setImmutable();
+				} else {
+					player->setHitpoint(player->getHitpoint() - 20);
+					UI::Instance().setUIValue("PlayerHP", player->getHitpoint());
+					player->setImmutable();
+				}
+			}
+		}
+	} else {
+#ifdef _DEBUG
+		std::cerr << "Player Immutable" << std::endl;
+#endif // _DEBUG
+	}
 	//处理对敌伤害
+	bool everhit = false;
 	for (auto blt = bullets.begin(); blt != bullets.end();) {
 		auto bltp = *blt;
 		bool kflag = false;
-		SDL_Rect bulletBox = { bltp->getX() - bltp->getVelocity().getX(),
-							   bltp->getY(),
-							   bltp->getVelocity().getX() + bltp->getW(),
-						       bltp->getH()};
+		SDL_Rect bulletBox = { bltp->getX() - bltp->getVelocity().getX() + 5,
+							   bltp->getY() + 5,
+							   bltp->getVelocity().getX() + bltp->getW() - 10,
+						       bltp->getH() - 10};
 		for (auto enm = enemys.begin(); enm != enemys.end();) {
 			auto enmp = *enm;
 			auto enemyBox = enmp->getBox();
@@ -54,6 +91,8 @@ void PlayingState::update() {
 				}
 				UI::Instance().setUIValueMax("EnemyBar", enmp->getMaxHitpoint());
 				UI::Instance().setUIValue("EnemyBar", enmp->getHitpoint());
+				dying_noupdate = 0;
+				on_counting = false;
 				kflag = true;
 				++enm;
 			} else {
@@ -61,10 +100,15 @@ void PlayingState::update() {
 			}
 		}
 		if (kflag) {
+			bltp->playHitSound();
 			blt = bullets.erase(blt);
+			everhit = true;
 		} else {
 			++blt;
 		}
+	} //END 处理敌对伤害
+	if (on_counting && !everhit) {
+		++dying_noupdate;
 	}
 }
 
@@ -92,6 +136,10 @@ bool PlayingState::onEnter() {
 	AudioManager::Instance().loadSound("asset/audio/PlayerAttack.mp3", "PLAYERATTACK");
 	AudioManager::Instance().loadSound("asset/audio/PlayerMagic.mp3", "PLAYERMAGIC");
 	AudioManager::Instance().loadSound("asset/audio/PlayerDefending.mp3", "PLAYERDEFENDING");
+	AudioManager::Instance().loadSound("asset/audio/PlayerJump.mp3", "PLAYERJUMPING");
+	AudioManager::Instance().loadSound("asset/audio/AttackHit.mp3", "ATTACKHIT");
+	AudioManager::Instance().loadSound("asset/audio/MagicHit.mp3", "MAGICHIT");
+	AudioManager::Instance().loadSound("asset/audio/EnemyDestroy.mp3", "ENEMYDESTROY");
 
 	SDL_SetRenderDrawColor(Game::Instance().getRenderer(), 227, 227, 227, 255);
 
@@ -100,12 +148,28 @@ bool PlayingState::onEnter() {
 	player->setCurrentRow(0);
 	player->setCurrentFrame(0);
 	this->player = player;
+	
 	auto *bat = static_cast<EnemyBat *>(Game::Instance().factories().create("EnemyBat"));
 	bat->setMaxHitpoint(40);
 	bat->setHitpoint(40);
 	bat->setX(23 * 32);
 	bat->setY(8 * 32);
 	enemys.push_back(bat);
+
+	bat = static_cast<EnemyBat *>(Game::Instance().factories().create("EnemyBat"));
+	bat->setMaxHitpoint(40);
+	bat->setHitpoint(40);
+	bat->setX(8 * 32);
+	bat->setY(12 * 32);
+	enemys.push_back(bat);
+
+	bat = static_cast<EnemyBat *>(Game::Instance().factories().create("EnemyBat"));
+	bat->setMaxHitpoint(40);
+	bat->setHitpoint(40);
+	bat->setX(23 * 32);
+	bat->setY(13 * 32);
+	enemys.push_back(bat);
+
 	AudioManager::Instance().playMusic("PLAYINGBGM");
 	return true;
 }

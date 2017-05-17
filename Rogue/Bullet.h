@@ -50,10 +50,16 @@ public:
 	int getDamage() {
 		return damage;
 	}
+	virtual void playHitSound() = 0;
+	bool perish() {
+		return destroy;
+	}
 protected:
 	Vector2 velocity;
 	Vector2 accelerate;
 	int damage = 0;
+	bool destroy = false;
+	int livetime = 0;
 };
 
 class PlayerMagicBullet : public Bullet {
@@ -62,6 +68,8 @@ public:
 		load(LoaderParams(0, 0, 32, 32, "BULLET"));
 		damage = 100;
 	}
+	void playHitSound() override;
+	virtual void update() override;
 	virtual void load(const LoaderParams &param) override;
 };
 
@@ -82,7 +90,9 @@ public:
 	void flip() {
 		_flip = !_flip;
 	}
+	virtual void update() override;
 	virtual void draw() override;
+	virtual void playHitSound() override;
 private:
 	bool _flip = false;
 };

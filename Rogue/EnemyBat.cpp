@@ -1,11 +1,8 @@
 #include "Enemy.h"
-
-enum BatState {
-	STALL,
-	MOVING_LEFT,
-	MOVING_RIGHT,
-	DYING
-};
+#include "AudioManager.h"
+#ifdef _DEBUG
+#include <iostream>
+#endif
 
 EnemyBat::EnemyBat() {
 	load(LoaderParams(0, 0, 32, 34, "ENEMYBAT"));
@@ -26,17 +23,13 @@ SDL_Rect EnemyBat::getBox()
 
 void EnemyBat::update()
 {
-	static auto stalling_frame = 0;
-	static auto moving_frame = 0;
-	static auto next_frame = 0;
-	static auto currentState = STALL;
 	if (hitpoint <= 0) {
-		dying = true;
-		// Tmp
-		return;
-	}
-	if (dying) {
 		currentState = DYING;
+		AudioManager::Instance().playSound("ENEMYDESTROY");
+		textureID = "BULLET";
+		currentFrame = 0;
+		currentRow = 2;
+		stalling_frame = 0;
 	}
 	switch (currentState) {
 	case STALL:
@@ -62,7 +55,8 @@ void EnemyBat::update()
 		}
 		break;
 	case DYING:
-		// TODO
+		if (++stalling_frame = 10)
+			dying = true;
 		break;
 	}
 	velocity += accelerate;
@@ -70,7 +64,11 @@ void EnemyBat::update()
 	y += (int)(velocity.getY());
 	if (next_frame++ == 5) {
 		next_frame = 0;
-		currentFrame = (currentFrame + 1) % 4;
+		if (currentState != DYING)
+			currentFrame = (currentFrame + 1) % 4;
 	}
-	
+#ifdef _DEBUG
+	//std::cerr << "Bat<" << this << "> x:" << x << " y:" << y << std::endl;
+#endif // _DEBUG
+
 }

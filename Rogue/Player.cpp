@@ -11,14 +11,6 @@
 #include <iostream>
 #endif
 
-enum PlayerState {
-	MOVING,
-	JUMPING,
-	ATTACKING,
-	SPELLING,
-	DEFENDING
-};
-
 Player::Player():
 	SDLGameObject(), velocity(0.0, 0.0), accelerate(0.0, 0.0) {
 }
@@ -32,6 +24,8 @@ void Player::load(const LoaderParams &param) {
 }
 
 void Player::draw() {
+	if (!display)
+		return;
 	// »æÖÆ»ùµã(x, y) -> (-1, 0)
 	//|
 	//+--
@@ -44,7 +38,6 @@ void Player::draw() {
 }
 
 void Player::update() {
-	static auto currentState = MOVING;
 	static auto fromState = MOVING;
 	auto xaxis = InputHandler::Instance().xValue(0, XBoxInputNodes::LEFT_JOYSTICK);
 	auto yaxis = InputHandler::Instance().yValue(0, XBoxInputNodes::LEFT_JOYSTICK);
@@ -62,6 +55,14 @@ void Player::update() {
 			UI::Instance().setUIBarColor("PlayerMana", 255, 50, 50);
 		} else {
 			UI::Instance().setUIBarColor("PlayerMana", 100, 50, 200);
+		}
+	}
+
+	if (immute) {
+		display = !display;
+		if (immutable_countdown-- == 0) {
+			immute = false;
+			display = true;
 		}
 	}
 
@@ -84,6 +85,7 @@ void Player::update() {
 			velocity.setY(-10);
 			accelerate.setY(1);
 			currentState = JUMPING;
+			AudioManager::Instance().playSound("PLAYERJUMPING");
 			break;
 		}
 		//¹¥»÷

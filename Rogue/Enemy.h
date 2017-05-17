@@ -58,6 +58,17 @@ public:
 	EnemyBat();
 	virtual SDL_Rect getBox();
 	virtual void update() override;
+private:
+	enum BatState {
+		STALL,
+		MOVING_LEFT,
+		MOVING_RIGHT,
+		DYING
+	};
+	int stalling_frame = 0;
+	int moving_frame = 0;
+	int next_frame = 0;
+	BatState currentState = STALL;
 };
 
 class EnemyBatCreator : public BaseCreator {
