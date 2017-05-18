@@ -64,6 +64,9 @@ public:
 		view_left = left;
 		view_right = right;
 	}
+	int getWidth() {
+		return width;
+	}
 	void draw();
 private:
 	std::string map;

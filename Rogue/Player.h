@@ -26,6 +26,9 @@ public:
 	bool isDefending() {
 		return currentState == DEFENDING;
 	}
+	void setX(int _x) {
+		x = _x;
+	}
 private:
 	enum PlayerState {
 		MOVING,

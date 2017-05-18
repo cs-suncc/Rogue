@@ -82,7 +82,7 @@ void Player::update() {
 		if (yaxis < 0) {	//=> JUMPING
 			setCurrentRow(1);
 			setCurrentFrame(0);
-			velocity.setY(-10);
+			velocity.setY(-15);
 			accelerate.setY(1);
 			currentState = JUMPING;
 			AudioManager::Instance().playSound("PLAYERJUMPING");
@@ -118,7 +118,7 @@ void Player::update() {
 			setCurrentFrame(0);
 		}
 		//坠落
-		if (currentMap->getTile((y + 32) / 32, (x + 11) / 32)->passable()) {
+		if (currentMap->getTile((y + 32) / 32, (_state->getViewportLeft() + x + 11) / 32)->passable()) {
 			accelerate.setY(1);
 		} else {
 			accelerate.setY(0);
@@ -128,7 +128,7 @@ void Player::update() {
 #ifdef _DEBUG
 		//std::cerr << "In JUMPING " << velocity.getX() << " " << velocity.getY() << std::endl;
 #endif // _DEBUG
-		if (currentMap->getTile((y + 32) / 32, (x + 11) / 32)->passable() == false) { //跳跃正常完成 => MOVING
+		if (currentMap->getTile((y + 32) / 32, (_state->getViewportLeft() + x + 11) / 32)->passable() == false) { //跳跃正常完成 => MOVING
 			accelerate.setY(0);
 			setCurrentRow(0);
 			currentState = MOVING;
@@ -170,7 +170,7 @@ void Player::update() {
 			setCurrentFrame(0);
 			currentState = MOVING;
 		}
-		if (currentMap->getTile((y + 32) / 32, (x + 11) / 32)->passable()) {
+		if (currentMap->getTile((y + 32) / 32, (_state->getViewportLeft() + x + 11) / 32)->passable()) {
 			accelerate.setY(1);
 		} else {
 			accelerate.setY(0);
@@ -195,7 +195,7 @@ void Player::update() {
 			++currentFrame;
 		}
 		//坠落
-		if (currentMap->getTile((y + 32) / 32, (x + 11) / 32)->passable()) {
+		if (currentMap->getTile((y + 32) / 32, (_state->getViewportLeft() + x + 11) / 32)->passable()) {
 			accelerate.setY(1);
 		} else {
 			accelerate.setY(0);
@@ -225,7 +225,7 @@ void Player::update() {
 			++currentFrame;
 		}
 		//坠落
-		if (currentMap->getTile((y + 32) / 32, (x + 11) / 32)->passable()) {
+		if (currentMap->getTile((y + 32) / 32, (_state->getViewportLeft() + x + 11) / 32)->passable()) {
 			accelerate.setY(1);
 		} else {
 			accelerate.setY(0);
@@ -233,7 +233,7 @@ void Player::update() {
 		break;
 	}
 	velocity += accelerate;
-	auto dx = x + (int)velocity.getX();
+	auto dx = _state->getViewportLeft() + x + (int)velocity.getX();
 	auto dy = y + (int)velocity.getY();
 	//碰撞检查+归位
 	bool bonceX = false;
@@ -246,6 +246,9 @@ void Player::update() {
 	//y有正速度(向下
 	// <注意getTile的参数顺序>
 	if (velocity.getY() > 0) {
+		if ((dy + 31) / 32 >= 19) {
+			throw std::exception("Out of map");
+		}
 		if (!currentMap->getTile(ckp[4][1], ckp[4][0])->passable() ||
 			!currentMap->getTile(ckp[5][1], ckp[5][0])->passable()) {
 			dy = ((dy) / 32) * 32;
@@ -294,7 +297,7 @@ void Player::update() {
 #endif // _DEBUG
 		}
 	}
-	x = dx;
+	x = dx - _state->getViewportLeft();
 	y = dy;
 	if (bonceX)
 		velocity.setX(0);

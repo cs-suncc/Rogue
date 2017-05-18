@@ -23,12 +23,15 @@ SDL_Rect EnemyBat::getBox()
 
 void EnemyBat::update()
 {
-	if (hitpoint <= 0) {
+	if (hitpoint <= 0 && currentState != DYING) {
 		currentState = DYING;
+		dying = false;
 		AudioManager::Instance().playSound("ENEMYDESTROY");
 		textureID = "BULLET";
 		currentFrame = 0;
 		currentRow = 2;
+		width = 32;
+		height = 32;
 		stalling_frame = 0;
 	}
 	switch (currentState) {
@@ -55,17 +58,16 @@ void EnemyBat::update()
 		}
 		break;
 	case DYING:
-		if (++stalling_frame = 10)
+		if (++stalling_frame == 20)
 			dying = true;
-		break;
+		return;
 	}
 	velocity += accelerate;
 	x += (int)(velocity.getX());
 	y += (int)(velocity.getY());
 	if (next_frame++ == 5) {
 		next_frame = 0;
-		if (currentState != DYING)
-			currentFrame = (currentFrame + 1) % 4;
+		currentFrame = (currentFrame + 1) % 4;
 	}
 #ifdef _DEBUG
 	//std::cerr << "Bat<" << this << "> x:" << x << " y:" << y << std::endl;

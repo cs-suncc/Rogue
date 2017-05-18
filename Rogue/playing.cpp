@@ -27,7 +27,26 @@ void PlayingState::update() {
 		AudioManager::Instance().playMusic("TITLEBGM");
 		return;
 	}
-	player->update();
+	try {
+		player->update();
+	}
+	catch(std::exception e) {
+		Game::Instance().getGameStateMachine()->popState();
+		AudioManager::Instance().playMusic("TITLEBGM");
+		return;
+	}
+	if (player->getX() > 720 && right < MapManager::Instance().getMap(currentMap)->getWidth()*32) {
+		left += 160;
+		right += 160;
+		player->setX(player->getX() - 160);
+		for (auto blt : bullets) {
+			blt->setX(blt->getX() - 160);
+		}
+		for (auto enm : enemys) {
+			enm->setX(enm->getX() - 160);
+		}
+		MapManager::Instance().getMap(currentMap)->viewport(left, right);
+	}
 	for (auto blt = bullets.begin(); blt != bullets.end();) {
 		(*blt)->update();
 		if ((*blt)->perish()) {
@@ -75,9 +94,9 @@ void PlayingState::update() {
 	for (auto blt = bullets.begin(); blt != bullets.end();) {
 		auto bltp = *blt;
 		bool kflag = false;
-		SDL_Rect bulletBox = { bltp->getX() - bltp->getVelocity().getX() + 5,
+		SDL_Rect bulletBox = { int(bltp->getX() - bltp->getVelocity().getX() + 5),
 							   bltp->getY() + 5,
-							   bltp->getVelocity().getX() + bltp->getW() - 10,
+							   int(bltp->getVelocity().getX() + bltp->getW() - 10),
 						       bltp->getH() - 10};
 		for (auto enm = enemys.begin(); enm != enemys.end();) {
 			auto enmp = *enm;
@@ -129,6 +148,9 @@ void PlayingState::render() {
 bool PlayingState::onEnter() {
 	MapManager::Instance().loadMap("TESTMAP", "asset/test.tmx");
 	currentMap = "TESTMAP";
+	left = 0;
+	right =30 * 32;
+	MapManager::Instance().getMap(currentMap)->viewport(left, right);
 	TextureManager::Instance().load("asset/image/rogue2.png", "PLAYER", Game::Instance().getRenderer());
 	TextureManager::Instance().load("asset/image/bullet.png", "BULLET", Game::Instance().getRenderer());
 	TextureManager::Instance().load("asset/image/EnemyBat.png", "ENEMYBAT", Game::Instance().getRenderer());

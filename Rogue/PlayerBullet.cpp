@@ -9,9 +9,9 @@ void PlayerMagicBullet::playHitSound() {
 }
 
 void PlayerMagicBullet::update() {
-	auto mp = MapManager::Instance().getMap(static_cast<PlayingState *>(
-		Game::Instance().getGameStateMachine()->currentState())->getCurrentMap());
-	if (!mp->getTile((y + 5) / 32, (x + 5) / 32)->passable())
+	auto _state = static_cast<PlayingState *>(Game::Instance().getGameStateMachine()->currentState());
+	auto mp = MapManager::Instance().getMap(_state->getCurrentMap());
+	if (!mp->getTile((y + 5) / 32, (_state->getViewportLeft() + x + 5) / 32)->passable())
 		destroy = true;
 	Bullet::update();
 }
@@ -38,9 +38,9 @@ void PlayerBullet::load(const LoaderParams & param) {
 
 void PlayerBullet::update()
 {
-	auto mp = MapManager::Instance().getMap(static_cast<PlayingState *>(
-		Game::Instance().getGameStateMachine()->currentState())->getCurrentMap());
-	if (!mp->getTile((y + 5) / 32, (x + 5) / 32)->passable())
+	auto _state = static_cast<PlayingState *>(Game::Instance().getGameStateMachine()->currentState());
+	auto mp = MapManager::Instance().getMap(_state->getCurrentMap());
+	if (!mp->getTile((y + 5) / 32, (_state->getViewportLeft() + x + 5) / 32)->passable())
 		destroy = true;
 	if (livetime++ > 10) {
 		destroy = true;

@@ -18,11 +18,15 @@ public:
 		return playingID;
 	}
 	void addBullet(Bullet *);
+	int getViewportLeft() {
+		return left;
+	}
 private:
 	static const std::string playingID;
 	Player *player;
 	std::vector<Bullet *> bullets;
 	std::vector<Enemy *> enemys;
-	int viewport;
+	int left=0;
+	int right = 960;
 	std::string currentMap;
 };

@@ -5,6 +5,11 @@
 #include "Vector2.h"
 #include "Game.h"
 
+#ifdef _DEBUG
+#include <iostream>
+#endif // _DEBUG
+
+
 class Enemy : public SDLGameObject {
 public:
 	Enemy() 
