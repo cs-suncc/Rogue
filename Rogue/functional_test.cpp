@@ -47,10 +47,10 @@ void functional_test_state_machine() {
 		Game::Instance().render();
 		fpsCounter = SDL_GetTicks() - fpsCounter;
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
 		if(ROGUE_SHOWFPS)
 			std::cerr << "Max FPS:" << 1000.0 / fpsCounter << std::endl;
-#endif
+//#endif
 	}
 	//Game::Instance().quit();
 }
