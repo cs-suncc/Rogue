@@ -7,15 +7,26 @@
 #include <cstdlib>
 #include <iostream>
 #include <cstring>
+#include <vector>
+#include <utility>
 
 class Tile {
 public:
-	Tile(int id, bool pass) : id(id), pass(pass) {}
+	Tile(int id, bool pass, int type = 0) : id(id), pass(pass) {
+		if (type == 1)
+			bat = true;
+		if (type == 2)
+			zombie = true;
+	}
 	bool passable() { return pass; }
+	bool spawnableBat() { return bat; }
+	bool spawnableZombie() { return zombie; }
 	void setPass(bool p) { pass = p; }
 private:
 	int id;
 	bool pass;
+	bool bat = false;
+	bool zombie = false;
 };
 
 class Tileset {
@@ -27,8 +38,8 @@ public:
 		TextureManager::Instance().load(std::string("asset/") + path, textureID, Game::Instance().getRenderer());
 		_tile_textureID = textureID;
 	}
-	void addTile(int id, bool pass) {
-		_tiles[id] = new Tile(id, pass);
+	void addTile(int id, bool pass, int type = 0) {
+		_tiles[id] = new Tile(id, pass, type);
 	}
 	Tile *getTile(int id) {
 		return _tiles[id];
@@ -68,6 +79,8 @@ public:
 		return width;
 	}
 	void draw();
+	std::vector<std::pair<int, int>> getBatSpawners();
+	std::vector<std::pair<int, int>> getZombieSpawners();
 private:
 	std::string map;
 	int **layer;

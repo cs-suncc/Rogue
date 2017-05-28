@@ -35,17 +35,46 @@ void PlayingState::update() {
 		AudioManager::Instance().playMusic("TITLEBGM");
 		return;
 	}
-	if (player->getX() > 720 && right < MapManager::Instance().getMap(currentMap)->getWidth()*32) {
-		left += 160;
-		right += 160;
-		player->setX(player->getX() - 160);
+	//视图卷动
+	if (player->getX() > 900 && right < MapManager::Instance().getMap(currentMap)->getWidth()*32) {
+		left += 480;
+		right += 480;
+		player->setX(player->getX() - 480);
 		for (auto blt : bullets) {
-			blt->setX(blt->getX() - 160);
+			blt->setX(blt->getX() - 480);
 		}
 		for (auto enm : enemys) {
-			enm->setX(enm->getX() - 160);
+			enm->setX(enm->getX() - 480);
 		}
 		MapManager::Instance().getMap(currentMap)->viewport(left, right);
+	} else 	if (player->getX() < 100 && left > 0) {
+		auto t = left;
+		if (left - 480 > 0) {
+			left -= 480;
+			right -= 480;
+			player->setX(player->getX() + 480);
+			for (auto blt : bullets) {
+				blt->setX(blt->getX() + 480);
+			}
+			for (auto enm : enemys) {
+				enm->setX(enm->getX() + 480);
+			}
+		} else {
+			left -= t;
+			right -= t;
+			player->setX(player->getX() + t);
+			for (auto blt : bullets) {
+				blt->setX(blt->getX() + t);
+			}
+			for (auto enm : enemys) {
+				enm->setX(enm->getX() + t);
+			}
+		}
+		MapManager::Instance().getMap(currentMap)->viewport(left, right);
+	}
+	//中间存档
+	if (left >= 5280 && !Game::Instance().middleSaved()) {
+		Game::Instance().middleSave();
 	}
 	for (auto blt = bullets.begin(); blt != bullets.end();) {
 		(*blt)->update();
@@ -148,8 +177,13 @@ void PlayingState::render() {
 bool PlayingState::onEnter() {
 	MapManager::Instance().loadMap("TESTMAP", "asset/test.tmx");
 	currentMap = "TESTMAP";
-	left = 0;
-	right =30 * 32;
+	if (!Game::Instance().middleSaved()) {
+		left = 0;
+		right = 30 * 32;
+	} else {
+		left = 165 * 32;
+		right = left + 30 * 32;
+	}
 	MapManager::Instance().getMap(currentMap)->viewport(left, right);
 	TextureManager::Instance().load("asset/image/rogue2.png", "PLAYER", Game::Instance().getRenderer());
 	TextureManager::Instance().load("asset/image/bullet.png", "BULLET", Game::Instance().getRenderer());
@@ -164,34 +198,29 @@ bool PlayingState::onEnter() {
 	AudioManager::Instance().loadSound("asset/audio/EnemyDestroy.mp3", "ENEMYDESTROY");
 
 	SDL_SetRenderDrawColor(Game::Instance().getRenderer(), 227, 227, 227, 255);
+	if (!Game::Instance().middleSaved()) {
+		auto *player = (Player *)Game::Instance().factories().create("Player");
+		player->load(LoaderParams(0 * 32, 13 * 32, 32, 64, "PLAYER"));
+		player->setCurrentRow(0);
+		player->setCurrentFrame(0);
+		this->player = player;
+	} else {
+		auto *player = (Player *)Game::Instance().factories().create("Player");
+		player->load(LoaderParams(4 * 32, 12 * 32, 32, 64, "PLAYER"));
+		player->setCurrentRow(0);
+		player->setCurrentFrame(0);
+		this->player = player;
+	}
+	auto allbats = MapManager::Instance().getMap(currentMap)->getBatSpawners();
 
-	auto *player = (Player *)Game::Instance().factories().create("Player");
-	player->load(LoaderParams(0 * 32, 13 * 32, 32, 64, "PLAYER"));
-	player->setCurrentRow(0);
-	player->setCurrentFrame(0);
-	this->player = player;
-	
-	auto *bat = static_cast<EnemyBat *>(Game::Instance().factories().create("EnemyBat"));
-	bat->setMaxHitpoint(40);
-	bat->setHitpoint(40);
-	bat->setX(23 * 32);
-	bat->setY(8 * 32);
-	enemys.push_back(bat);
-
-	bat = static_cast<EnemyBat *>(Game::Instance().factories().create("EnemyBat"));
-	bat->setMaxHitpoint(40);
-	bat->setHitpoint(40);
-	bat->setX(8 * 32);
-	bat->setY(12 * 32);
-	enemys.push_back(bat);
-
-	bat = static_cast<EnemyBat *>(Game::Instance().factories().create("EnemyBat"));
-	bat->setMaxHitpoint(40);
-	bat->setHitpoint(40);
-	bat->setX(23 * 32);
-	bat->setY(13 * 32);
-	enemys.push_back(bat);
-
+	for (auto each : allbats) {
+		auto *bat = static_cast<EnemyBat *>(Game::Instance().factories().create("EnemyBat"));
+		bat->setMaxHitpoint(40);
+		bat->setHitpoint(40);
+		bat->setX(each.first * 32);
+		bat->setY(each.second * 32);
+		enemys.push_back(bat);
+	}
 	AudioManager::Instance().playMusic("PLAYINGBGM");
 	return true;
 }

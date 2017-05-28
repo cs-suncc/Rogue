@@ -26,6 +26,8 @@ private:
 	bool gameRunning;
 	int hottime;
 	GameObjectFactory gof;
+	bool into_middle = false;
+	bool into_boss = false;
 public:
 	inline static Game &Instance() {
 		static Game singleton;	//Singleton
@@ -48,4 +50,9 @@ public:
 	GameObjectFactory &factories() {
 		return gof;
 	}
+	bool middleSaved() {
+		return into_middle;
+	}
+	void middleSave();
+	void bossSave();
 };

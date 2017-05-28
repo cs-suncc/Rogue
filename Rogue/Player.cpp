@@ -246,7 +246,7 @@ void Player::update() {
 	//y有正速度(向下
 	// <注意getTile的参数顺序>
 	if (velocity.getY() > 0) {
-		if ((dy + 31) / 32 >= 19) {
+		if ((dy + 31) / 32 >= 20) {
 			throw std::exception("Out of map");
 		}
 		if (!currentMap->getTile(ckp[4][1], ckp[4][0])->passable() ||

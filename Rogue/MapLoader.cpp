@@ -21,8 +21,18 @@ Map::Map(std::string map): map(map) {
 		std::cerr << p->Attribute("id") << std::endl;
 #endif
 		std::string pv = p->FirstChildElement("properties")->FirstChildElement("property")->Attribute("value");
-		bool pass = (pv == "true");
-		_tile->addTile(atoi(p->Attribute("id")), pass);
+		std::string pn = p->FirstChildElement("properties")->FirstChildElement("property")->Attribute("name");
+		bool pass;
+		if (pn == "Bat") {
+			pass = true;
+			_tile->addTile(atoi(p->Attribute("id")), pass, 1);
+		} else if (pn == "zombie") {
+			pass = true;
+			_tile->addTile(atoi(p->Attribute("id")), pass, 2);
+		} else {
+			pass = (pv == "true");
+			_tile->addTile(atoi(p->Attribute("id")), pass);
+		}
 		p = p->NextSiblingElement();
 	}
 	p = root->FirstChildElement("map")->FirstChildElement("layer")->FirstChildElement("data");
@@ -66,4 +76,26 @@ void Map::draw()
 		}
 	}
 
+}
+
+std::vector<std::pair<int, int>> Map::getBatSpawners()
+{
+	std::vector<std::pair<int, int>> spawners;
+	for (int i=0;i<height; ++i)
+		for (int j = 0; j < width; ++j) {
+			if (getTile(i, j)->spawnableBat())
+				spawners.push_back({ j, i }); // x goes first
+		}
+	return spawners;
+}
+
+std::vector<std::pair<int, int>> Map::getZombieSpawners()
+{
+	std::vector<std::pair<int, int>> spawners;
+	for (int i = 0; i<height; ++i)
+		for (int j = 0; j < width; ++j) {
+			if (getTile(i, j)->spawnableZombie())
+				spawners.push_back({ j, i }); // x goes first
+		}
+	return spawners;
 }

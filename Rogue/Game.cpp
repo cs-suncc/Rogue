@@ -35,6 +35,8 @@ bool Game::init(const char * title, int x, int y, int width, int height, int fla
 	gof.registerType("PlayerMagicBullet", new PlayerMagicBulletCreator());
 	gof.registerType("EnemyBat", new EnemyBatCreator());
 
+	AudioManager::Instance().loadSound("asset/audio/middle.mp3", "MIDDLESAVE");
+
 	gameStateMachine = new StateMachine();
 	gameStateMachine->pushState(new MainMenuState());
 	gameRunning = true;
@@ -63,6 +65,16 @@ void Game::update() {
 }
 
 void Game::clean() {
+}
+
+void Game::middleSave() {
+	into_middle = true;
+	AudioManager::Instance().playSound("MIDDLESAVE");
+}
+
+void Game::bossSave()
+{
+	into_boss= true;
 }
 
 void Game::loadAssets() {
