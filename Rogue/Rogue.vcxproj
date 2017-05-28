@@ -127,6 +127,7 @@
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="EnemyBat.cpp" />
+    <ClCompile Include="EnemyZombie.cpp" />
     <ClCompile Include="functional_test.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObjectFactory.cpp" />

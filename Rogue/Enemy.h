@@ -49,6 +49,7 @@ public:
 	bool perish() {
 		return dying;
 	}
+	virtual std::string getType() = 0;
 protected:
 	int hitpoint = 0;
 	int hitpoint_max = 0;
@@ -61,8 +62,11 @@ protected:
 class EnemyBat : public Enemy {
 public:
 	EnemyBat();
-	virtual SDL_Rect getBox();
+	virtual SDL_Rect getBox() override;
 	virtual void update() override;
+	virtual std::string getType() override {
+		return "EnemyBat";
+	}
 private:
 	enum BatState {
 		STALL,
@@ -73,6 +77,7 @@ private:
 	int stalling_frame = 0;
 	int moving_frame = 0;
 	int next_frame = 0;
+	int next_moving_frame = 0;
 	BatState currentState = STALL;
 };
 
@@ -80,5 +85,33 @@ class EnemyBatCreator : public BaseCreator {
 public:
 	virtual GameObject *createGameObject() const override {
 		return new EnemyBat();
+	}
+};
+
+class EnemyZombie : public Enemy {
+public:
+	EnemyZombie();
+	virtual SDL_Rect getBox() override;
+	virtual void update() override;
+	virtual std::string getType() {
+		return "EnemyZombie";
+	}
+private:
+	enum ZombieState {
+		STALL,
+		MOVING,
+		DYING
+	};
+	int stalling_frame = 0;
+	int moving_frame = 0;
+	int next_frame = 0;
+	int next_moving_frame = 0;
+	ZombieState currentState = STALL;
+};
+
+class EnemyZombieCreator : public BaseCreator {
+public:
+	virtual GameObject *createGameObject() const override {
+		return new EnemyZombie();
 	}
 };

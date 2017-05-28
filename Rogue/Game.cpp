@@ -34,6 +34,7 @@ bool Game::init(const char * title, int x, int y, int width, int height, int fla
 	gof.registerType("PlayerBullet", new PlayerBulletCreator());
 	gof.registerType("PlayerMagicBullet", new PlayerMagicBulletCreator());
 	gof.registerType("EnemyBat", new EnemyBatCreator());
+	gof.registerType("EnemyZombie", new  EnemyZombieCreator());
 
 	AudioManager::Instance().loadSound("asset/audio/middle.mp3", "MIDDLESAVE");
 

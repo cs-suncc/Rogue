@@ -102,12 +102,17 @@ void PlayingState::update() {
 	if (!player->immutable()) {
 		for (auto enmp : enemys) {
 			if (collision({ player->getX() + 5, player->getY() - 20, 20, 50 }, enmp->getBox())) {
+				auto damage = 0;
+				if (enmp->getType() == "EnemyZombie")
+					damage = 25;
+				else
+					damage = 20;
 				if (player->isDefending()) {
-					player->setHitpoint(player->getHitpoint() - 5);
+					player->setHitpoint(player->getHitpoint() - damage + 15);
 					UI::Instance().setUIValue("PlayerHP", player->getHitpoint());
 					player->setImmutable();
 				} else {
-					player->setHitpoint(player->getHitpoint() - 20);
+					player->setHitpoint(player->getHitpoint() - damage);
 					UI::Instance().setUIValue("PlayerHP", player->getHitpoint());
 					player->setImmutable();
 				}
@@ -188,6 +193,8 @@ bool PlayingState::onEnter() {
 	TextureManager::Instance().load("asset/image/rogue2.png", "PLAYER", Game::Instance().getRenderer());
 	TextureManager::Instance().load("asset/image/bullet.png", "BULLET", Game::Instance().getRenderer());
 	TextureManager::Instance().load("asset/image/EnemyBat.png", "ENEMYBAT", Game::Instance().getRenderer());
+	TextureManager::Instance().load("asset/image/EnemyZombie.png", "ENEMYZOMBIE", Game::Instance().getRenderer());
+	TextureManager::Instance().load("asset/image/Gem.png", "GEM", Game::Instance().getRenderer());
 	AudioManager::Instance().loadMusic("asset/audio/dungeon.mp3", "PLAYINGBGM");
 	AudioManager::Instance().loadSound("asset/audio/PlayerAttack.mp3", "PLAYERATTACK");
 	AudioManager::Instance().loadSound("asset/audio/PlayerMagic.mp3", "PLAYERMAGIC");
@@ -218,8 +225,17 @@ bool PlayingState::onEnter() {
 		bat->setMaxHitpoint(40);
 		bat->setHitpoint(40);
 		bat->setX(each.first * 32);
-		bat->setY(each.second * 32);
+		bat->setY(each.second * 32 + 10);
 		enemys.push_back(bat);
+	}
+	auto allzombies = MapManager::Instance().getMap(currentMap)->getZombieSpawners();
+	for (auto each : allzombies) {
+		auto *zombie = static_cast<EnemyZombie *>(Game::Instance().factories().create("EnemyZombie"));
+		zombie->setMaxHitpoint(200);
+		zombie->setHitpoint(200);
+		zombie->setX(each.first * 32);
+		zombie->setY(each.second * 32 - 17);
+		enemys.push_back(zombie);
 	}
 	AudioManager::Instance().playMusic("PLAYINGBGM");
 	return true;

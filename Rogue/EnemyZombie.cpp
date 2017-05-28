@@ -1,30 +1,28 @@
 #include "Enemy.h"
 #include "AudioManager.h"
-#ifdef _DEBUG
-#include <iostream>
-#endif
-
-EnemyBat::EnemyBat() {
-	load(LoaderParams(0, 0, 32, 34, "ENEMYBAT"));
+EnemyZombie::EnemyZombie()
+{
+	load(LoaderParams(0, 0, 40, 50, "ENEMYZOMBIE"));
 	currentRow = 0;
 	currentFrame = 0;
 	next_moving_frame = 125 + rand() % 50;
+	faceflip = rand() % 2;
 }
 
-SDL_Rect EnemyBat::getBox()
+SDL_Rect EnemyZombie::getBox()
 {
 	if (currentState == DYING)
 		return { -1, -1, 1, 1 };
 	if (currentFrame == 0)
-		return { x + 4, y, 26, 24 };
+		return { x + 4, y + 3, 26, 47 };
 	if (currentFrame == 1)
-		return { x + 2, y + 5, 28, 21 };
+		return { x + 3, y + 3, 32, 46 };
 	if (currentFrame == 2)
-		return { x + 3, y + 4, 19, 28 };
-	return { x + 3, y + 5, 27, 21 };
+		return { x + 2, y + 5, 26, 47 };
+	return { x + 3, y + 5, 32, 46 };
 }
 
-void EnemyBat::update()
+void EnemyZombie::update()
 {
 	if (hitpoint <= 0 && currentState != DYING) {
 		currentState = DYING;
@@ -42,19 +40,12 @@ void EnemyBat::update()
 		if (stalling_frame++ == 76) {
 			velocity.setX((faceflip ? -1 : 1) * 1);
 			faceflip = !faceflip;
-			currentState = faceflip ? MOVING_RIGHT : MOVING_LEFT;
+			currentState = MOVING;
 			moving_frame = 0;
 			next_moving_frame = rand() % 100 + 50;
 		}
 		break;
-	case MOVING_LEFT:
-		if (moving_frame++ == next_moving_frame) {
-			velocity.setX(0);
-			currentState = STALL;
-			stalling_frame = 0;
-		}
-		break;
-	case MOVING_RIGHT:
+	case MOVING:
 		if (moving_frame++ == next_moving_frame) {
 			velocity.setX(0);
 			currentState = STALL;
@@ -69,12 +60,8 @@ void EnemyBat::update()
 	velocity += accelerate;
 	x += (int)(velocity.getX());
 	y += (int)(velocity.getY());
-	if (next_frame++ == 5) {
+	if (next_frame++ == 20) {
 		next_frame = 0;
 		currentFrame = (currentFrame + 1) % 4;
 	}
-#ifdef _DEBUG
-	//std::cerr << "Bat<" << this << "> x:" << x << " y:" << y << std::endl;
-#endif // _DEBUG
-
 }

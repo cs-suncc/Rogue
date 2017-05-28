@@ -29,6 +29,12 @@ Map::Map(std::string map): map(map) {
 		} else if (pn == "zombie") {
 			pass = true;
 			_tile->addTile(atoi(p->Attribute("id")), pass, 2);
+		} else if (pn == "healer") {
+			pass = true;
+			_tile->addTile(atoi(p->Attribute("id")), pass, 3);
+		} else if (pn == "mana") {
+			pass = true;
+			_tile->addTile(atoi(p->Attribute("id")), pass, 4);
 		} else {
 			pass = (pv == "true");
 			_tile->addTile(atoi(p->Attribute("id")), pass);
@@ -95,6 +101,28 @@ std::vector<std::pair<int, int>> Map::getZombieSpawners()
 	for (int i = 0; i<height; ++i)
 		for (int j = 0; j < width; ++j) {
 			if (getTile(i, j)->spawnableZombie())
+				spawners.push_back({ j, i }); // x goes first
+		}
+	return spawners;
+}
+
+std::vector<std::pair<int, int>> Map::getHealerSpawners()
+{
+	std::vector<std::pair<int, int>> spawners;
+	for (int i = 0; i<height; ++i)
+		for (int j = 0; j < width; ++j) {
+			if (getTile(i, j)->spawnableHealer())
+				spawners.push_back({ j, i }); // x goes first
+		}
+	return spawners;
+}
+
+std::vector<std::pair<int, int>> Map::getManaSpawners()
+{
+	std::vector<std::pair<int, int>> spawners;
+	for (int i = 0; i<height; ++i)
+		for (int j = 0; j < width; ++j) {
+			if (getTile(i, j)->spawnableMana())
 				spawners.push_back({ j, i }); // x goes first
 		}
 	return spawners;

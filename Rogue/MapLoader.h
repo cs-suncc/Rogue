@@ -17,16 +17,24 @@ public:
 			bat = true;
 		if (type == 2)
 			zombie = true;
+		if (type == 3)
+			healer = true;
+		if (type == 4)
+			mana == true;
 	}
 	bool passable() { return pass; }
 	bool spawnableBat() { return bat; }
 	bool spawnableZombie() { return zombie; }
+	bool spawnableHealer() { return healer; }
+	bool spawnableMana() { return mana; }
 	void setPass(bool p) { pass = p; }
 private:
 	int id;
 	bool pass;
 	bool bat = false;
 	bool zombie = false;
+	bool healer = false;
+	bool mana = false;
 };
 
 class Tileset {
@@ -81,6 +89,8 @@ public:
 	void draw();
 	std::vector<std::pair<int, int>> getBatSpawners();
 	std::vector<std::pair<int, int>> getZombieSpawners();
+	std::vector<std::pair<int, int>> getHealerSpawners();
+	std::vector<std::pair<int, int>> getManaSpawners();
 private:
 	std::string map;
 	int **layer;
