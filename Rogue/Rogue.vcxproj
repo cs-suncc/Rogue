@@ -131,6 +131,7 @@
     <ClCompile Include="functional_test.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObjectFactory.cpp" />
+    <ClCompile Include="Gem.cpp" />
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mainmenu.cpp" />
@@ -153,6 +154,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameObjectFactory.h" />
     <ClInclude Include="GameState.h" />
+    <ClInclude Include="Gem.h" />
     <ClInclude Include="mainmenu.h" />
     <ClInclude Include="MapLoader.h" />
     <ClInclude Include="MapManager.h" />

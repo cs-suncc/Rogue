@@ -4,6 +4,7 @@
 #include "Bullet.h"
 #include "Enemy.h"
 #include "Player.h"
+#include "Gem.h"
 
 class PlayingState : public GameState {
 public:
@@ -26,6 +27,8 @@ private:
 	Player *player;
 	std::vector<Bullet *> bullets;
 	std::vector<Enemy *> enemys;
+	std::vector<HealGem *> healgems;
+	std::vector<ManaGem *> managems;
 	int left=0;
 	int right = 960;
 	std::string currentMap;

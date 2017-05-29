@@ -75,6 +75,9 @@
     <ClCompile Include="EnemyZombie.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Gem.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TextureManager.h">
@@ -132,6 +135,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Enemy.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Gem.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

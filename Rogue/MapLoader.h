@@ -20,7 +20,7 @@ public:
 		if (type == 3)
 			healer = true;
 		if (type == 4)
-			mana == true;
+			mana = true;
 	}
 	bool passable() { return pass; }
 	bool spawnableBat() { return bat; }

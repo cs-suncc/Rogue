@@ -47,8 +47,9 @@ void Player::update() {
 		static_cast<PlayingState *>(Game::Instance().getGameStateMachine()->currentState())->getCurrentMap()
 	);
 	auto _state = static_cast<PlayingState *>(Game::Instance().getGameStateMachine()->currentState());
-
-	if (fabs(velocity.getX() - 0) < 1e-6 && fabs(velocity.getY() - 0) < 1e-6) {
+	static auto reserve_mana_count = 0;
+	if (fabs(velocity.getX() - 0) < 1e-6 && fabs(velocity.getY() - 0) < 1e-6 && reserve_mana_count++ > 3) {
+		reserve_mana_count = 0;
 		mana = mana + 1 > ManaMax ? ManaMax : mana + 1;
 		UI::Instance().setUIValue("PlayerMana", mana);
 		if (mana < 70) {

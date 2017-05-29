@@ -35,6 +35,12 @@ void PlayingState::update() {
 		AudioManager::Instance().playMusic("TITLEBGM");
 		return;
 	}
+	for (auto gem : healgems) {
+		gem->update();
+	}
+	for (auto gem : managems) {
+		gem->update();
+	}
 	//视图卷动
 	if (player->getX() > 900 && right < MapManager::Instance().getMap(currentMap)->getWidth()*32) {
 		left += 480;
@@ -45,6 +51,12 @@ void PlayingState::update() {
 		}
 		for (auto enm : enemys) {
 			enm->setX(enm->getX() - 480);
+		}
+		for (auto gem : healgems) {
+			gem->setX(gem->getX() - 480);
+		}
+		for (auto gem : managems) {
+			gem->setX(gem->getX() - 480);
 		}
 		MapManager::Instance().getMap(currentMap)->viewport(left, right);
 	} else 	if (player->getX() < 100 && left > 0) {
@@ -58,6 +70,12 @@ void PlayingState::update() {
 			}
 			for (auto enm : enemys) {
 				enm->setX(enm->getX() + 480);
+			}
+			for (auto gem : healgems) {
+				gem->setX(gem->getX() + 480);
+			}
+			for (auto gem : managems) {
+				gem->setX(gem->getX() + 480);
 			}
 		} else {
 			left -= t;
@@ -123,6 +141,34 @@ void PlayingState::update() {
 		std::cerr << "Player Immutable" << std::endl;
 #endif // _DEBUG
 	}
+	//处理道具
+	if (player->getHitpoint() != player->getHitpointMax()) {
+		for (auto each : healgems) {
+			if (collision({ player->getX() + 5, player->getY() - 20, 20, 50 }, each->getBox())) {
+				auto hp = player->getHitpoint();
+				hp = hp + 40 <= player->getHitpointMax() ? hp + 40 : player->getHitpointMax();
+				player->setHitpoint(hp);
+				UI::Instance().setUIValue("PlayerHP", player->getHitpoint());
+				AudioManager::Instance().playSound("HEAL");
+				each->activate();
+				break;
+			}
+		}
+	}
+	if (player->getMana() != player->getManaMax()) {
+		for (auto each : managems) {
+			if (collision({ player->getX() + 5, player->getY() - 20, 20, 50 }, each->getBox())) {
+				auto mp = player->getMana();
+				mp = mp + 100 <= player->getManaMax() ? mp + 40 : player->getManaMax();
+				player->setMana(mp);
+				UI::Instance().setUIValue("PlayerMana", player->getMana());
+				AudioManager::Instance().playSound("MANA");
+				each->activate();
+				break;
+			}
+		}
+	}
+
 	//处理对敌伤害
 	bool everhit = false;
 	for (auto blt = bullets.begin(); blt != bullets.end();) {
@@ -176,6 +222,13 @@ void PlayingState::render() {
 	for (auto enm : enemys) {
 		enm->draw();
 	}
+	for (auto gem : healgems) {
+		gem->draw();
+	}
+	for (auto gem : managems) {
+		gem->draw();
+	}
+
 	UI::Instance().draw();
 }
 
@@ -203,6 +256,8 @@ bool PlayingState::onEnter() {
 	AudioManager::Instance().loadSound("asset/audio/AttackHit.mp3", "ATTACKHIT");
 	AudioManager::Instance().loadSound("asset/audio/MagicHit.mp3", "MAGICHIT");
 	AudioManager::Instance().loadSound("asset/audio/EnemyDestroy.mp3", "ENEMYDESTROY");
+	AudioManager::Instance().loadSound("asset/audio/Heal.mp3", "HEAL");
+	AudioManager::Instance().loadSound("asset/audio/Mana.mp3", "MANA");
 
 	SDL_SetRenderDrawColor(Game::Instance().getRenderer(), 227, 227, 227, 255);
 	if (!Game::Instance().middleSaved()) {
@@ -219,24 +274,41 @@ bool PlayingState::onEnter() {
 		this->player = player;
 	}
 	auto allbats = MapManager::Instance().getMap(currentMap)->getBatSpawners();
-
 	for (auto each : allbats) {
-		auto *bat = static_cast<EnemyBat *>(Game::Instance().factories().create("EnemyBat"));
+		auto bat = static_cast<EnemyBat *>(Game::Instance().factories().create("EnemyBat"));
 		bat->setMaxHitpoint(40);
 		bat->setHitpoint(40);
 		bat->setX(each.first * 32);
 		bat->setY(each.second * 32 + 10);
 		enemys.push_back(bat);
 	}
+
 	auto allzombies = MapManager::Instance().getMap(currentMap)->getZombieSpawners();
 	for (auto each : allzombies) {
-		auto *zombie = static_cast<EnemyZombie *>(Game::Instance().factories().create("EnemyZombie"));
+		auto zombie = static_cast<EnemyZombie *>(Game::Instance().factories().create("EnemyZombie"));
 		zombie->setMaxHitpoint(200);
 		zombie->setHitpoint(200);
 		zombie->setX(each.first * 32);
 		zombie->setY(each.second * 32 - 17);
 		enemys.push_back(zombie);
 	}
+
+	auto allhealgems = MapManager::Instance().getMap(currentMap)->getHealerSpawners();
+	for (auto each : allhealgems) {
+		auto gem = static_cast<HealGem *>(Game::Instance().factories().create("HealGem"));
+		gem->setX(each.first * 32);
+		gem->setY(each.second * 32);
+		healgems.push_back(gem);
+	}
+
+	auto allmanagems = MapManager::Instance().getMap(currentMap)->getManaSpawners();
+	for (auto each : allmanagems) {
+		auto gem = static_cast<ManaGem *>(Game::Instance().factories().create("ManaGem"));
+		gem->setX(each.first * 32);
+		gem->setY(each.second * 32);
+		managems.push_back(gem);
+	}
+
 	AudioManager::Instance().playMusic("PLAYINGBGM");
 	return true;
 }

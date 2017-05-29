@@ -13,8 +13,20 @@ public:
 	int getHitpoint() {
 		return hitpoint;
 	}
+	int getHitpointMax() {
+		return hitpointmax;
+	}
 	void setHitpoint(int hp) {
 		hitpoint = hp;
+	}
+	int getMana() {
+		return mana;
+	}
+	int getManaMax() {
+		return ManaMax;
+	}
+	void setMana(int mp) {
+		mana = mp;
 	}
 	bool immutable() {
 		return immute;
@@ -39,6 +51,7 @@ private:
 	};
 	bool faceflip = false;
 	int hitpoint = 100;
+	int hitpointmax = 100;
 	int ManaMax = 200;
 	int mana = 200;
 	bool immute = false;
