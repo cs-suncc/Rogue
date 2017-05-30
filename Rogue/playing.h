@@ -18,7 +18,8 @@ public:
 	std::string getStateID() const override {
 		return playingID;
 	}
-	void addBullet(Bullet *);
+	void addBullet(Bullet *blt);
+	void addBullet(BossBullet *blt);
 	int getViewportLeft() {
 		return left;
 	}
@@ -29,6 +30,7 @@ private:
 	std::vector<Enemy *> enemys;
 	std::vector<HealGem *> healgems;
 	std::vector<ManaGem *> managems;
+	std::vector<Bullet *> boss_bullets;
 	int left=0;
 	int right = 960;
 	std::string currentMap;

@@ -1,5 +1,8 @@
 #include "Enemy.h"
 #include "AudioManager.h"
+#include "Game.h"
+#include "MapManager.h"
+#include "playing.h"
 EnemyZombie::EnemyZombie()
 {
 	load(LoaderParams(0, 0, 40, 50, "ENEMYZOMBIE"));
@@ -60,6 +63,22 @@ void EnemyZombie::update()
 	velocity += accelerate;
 	x += (int)(velocity.getX());
 	y += (int)(velocity.getY());
+
+	auto _state = static_cast<PlayingState *>(Game::Instance().getGameStateMachine()->currentState());
+	auto mp = MapManager::Instance().getMap(_state->getCurrentMap());
+	//´¦Àí×²Ç½
+	if (velocity.getX() > 0) {
+		if (!mp->getTile((y + 32) / 32, (_state->getViewportLeft() + x + 28) / 32)->passable()) {
+			x -= (int)(velocity.getX());
+			y -= (int)(velocity.getY());
+		}
+	} else if (velocity.getX() < 0) {
+		if (!mp->getTile((y + 32) / 32, (_state->getViewportLeft() + x + 4) / 32)->passable()) {
+			x -= (int)(velocity.getX());
+			y -= (int)(velocity.getY());
+		}
+	}
+
 	if (next_frame++ == 20) {
 		next_frame = 0;
 		currentFrame = (currentFrame + 1) % 4;

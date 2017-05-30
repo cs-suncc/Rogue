@@ -4,15 +4,13 @@
 #include "LoaderParams.h"
 #include "GameObjectFactory.h"
 #include "TextureManager.h"
+#include <functional>
 
 class Bullet : public SDLGameObject {
 public:
 	Bullet()
 		:velocity(0, 0), accelerate(0, 0) {
 		load(LoaderParams(0, 0, 32, 32, "BULLET"));
-	}
-	virtual void load(const LoaderParams &param) override {
-		SDLGameObject::load(param);
 	}
 	virtual void draw() override;
 	virtual void update() override {
@@ -41,12 +39,6 @@ public:
 	void setY(int _y) {
 		y = _y;
 	}
-	int getX() {
-		return x;
-	}
-	int getY() {
-		return y;
-	}
 	int getDamage() {
 		return damage;
 	}
@@ -73,12 +65,12 @@ public:
 	virtual void load(const LoaderParams &param) override;
 };
 
-class PlayerMagicBulletCreator : public BaseCreator {
+/*class PlayerMagicBulletCreator : public BaseCreator {
 public:
 	GameObject *createGameObject() const override {
 		return new PlayerMagicBullet();
 	}
-};
+};*/
 
 class PlayerBullet : public Bullet {
 public:
@@ -97,9 +89,43 @@ private:
 	bool _flip = false;
 };
 
-class PlayerBulletCreator : public BaseCreator {
+/*class PlayerBulletCreator : public BaseCreator {
 public:
 	GameObject *createGameObject() const override {
 		return new PlayerBullet();
+	}
+};*/
+
+class BossBullet : public Bullet {
+public:
+	BossBullet() {
+		load(LoaderParams(0, 0, 32, 32, "BOSSBULLET"));
+	}
+	void setAccelerateUpdator(std::function<Vector2(Vector2, int, int, int)> f) {
+		accelerate_updator = f;
+	}
+	SDL_Rect getBox() {
+		return { x + 4, y + 4, 24, 24 };
+	}
+protected:
+	std::function<Vector2(Vector2, int, int, int)> accelerate_updator;
+};
+
+class BossFireBullet : public BossBullet {
+public:
+	BossFireBullet() {
+		currentRow = 0;
+		currentFrame = 0;
+		damage = 15;
+	}
+	virtual void update() override;
+	virtual void playHitSound() override;
+};
+
+template<typename T>
+class BulletCreator : public BaseCreator {
+public:
+	GameObject *createGameObject() const override {
+		return new T();
 	}
 };

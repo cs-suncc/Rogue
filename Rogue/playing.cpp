@@ -41,6 +41,36 @@ void PlayingState::update() {
 	for (auto gem : managems) {
 		gem->update();
 	}
+	for (auto blt = bullets.begin(); blt != bullets.end();) {
+		(*blt)->update();
+		if ((*blt)->perish()) {
+			blt = bullets.erase(blt);
+		} else {
+			++blt;
+		}
+	}
+	for (auto blt = boss_bullets.begin(); blt != boss_bullets.end();) {
+		(*blt)->update();
+		if ((*blt)->perish()) {
+			blt = boss_bullets.erase(blt);
+		} else {
+			++blt;
+		}
+	}
+	for (auto enm = enemys.begin(); enm != enemys.end();) {
+		(*enm)->update();
+		if ((*enm)->perish()) {
+			enm = enemys.erase(enm);
+			on_counting = true;
+		} else {
+			++enm;
+		}
+	}
+	if (on_counting && dying_noupdate > 60) {
+		UI::Instance().destroyUI("EnemyBar");
+		dying_noupdate = 0;
+		on_counting = false;
+	}
 	//视图卷动
 	if (player->getX() > 900 && right < MapManager::Instance().getMap(currentMap)->getWidth()*32) {
 		left += 480;
@@ -87,6 +117,12 @@ void PlayingState::update() {
 			for (auto enm : enemys) {
 				enm->setX(enm->getX() + t);
 			}
+			for (auto gem : healgems) {
+				gem->setX(gem->getX() + t);
+			}
+			for (auto gem : managems) {
+				gem->setX(gem->getX() + t);
+			}
 		}
 		MapManager::Instance().getMap(currentMap)->viewport(left, right);
 	}
@@ -94,32 +130,12 @@ void PlayingState::update() {
 	if (left >= 5280 && !Game::Instance().middleSaved()) {
 		Game::Instance().middleSave();
 	}
-	for (auto blt = bullets.begin(); blt != bullets.end();) {
-		(*blt)->update();
-		if ((*blt)->perish()) {
-			blt = bullets.erase(blt);
-		} else {
-			++blt;
-		}
-	}
-	for (auto enm = enemys.begin(); enm != enemys.end();) {
-		(*enm)->update();
-		if ((*enm)->perish()) {
-			enm = enemys.erase(enm);
-			on_counting = true;
-		} else {
-			++enm;
-		}
-	}
-	if (on_counting && dying_noupdate > 60) {
-		UI::Instance().destroyUI("EnemyBar");
-		dying_noupdate = 0;
-		on_counting = false;
-	}
 	//处理伤害
+	SDL_Rect player_box = { player->getX() + 5, player->getY() - 20, 20, 50 };
 	if (!player->immutable()) {
+		//处理伤害 之 体术
 		for (auto enmp : enemys) {
-			if (collision({ player->getX() + 5, player->getY() - 20, 20, 50 }, enmp->getBox())) {
+			if (collision(player_box, enmp->getBox())) {
 				auto damage = 0;
 				if (enmp->getType() == "EnemyZombie")
 					damage = 25;
@@ -134,6 +150,20 @@ void PlayingState::update() {
 					UI::Instance().setUIValue("PlayerHP", player->getHitpoint());
 					player->setImmutable();
 				}
+			}
+		}
+		//处理伤害 之 魔法
+		for (auto bltp = boss_bullets.begin(); bltp != boss_bullets.end(); ) {
+			auto blt = static_cast<BossBullet *>(*bltp);
+			if (collision(player_box, blt->getBox())) {
+				if (!player->isDefending()) {
+					player->setHitpoint(player->getHitpoint() - blt->getDamage());
+					UI::Instance().setUIValue("PlayerHP", player->getHitpoint());
+					blt->playHitSound();
+				}
+				bltp = boss_bullets.erase(bltp);
+			} else {
+				++bltp;
 			}
 		}
 	} else {
@@ -219,6 +249,9 @@ void PlayingState::render() {
 	for (auto blt : bullets) {
 		blt->draw();
 	}
+	for (auto blt : boss_bullets) {
+		blt->draw();
+	}
 	for (auto enm : enemys) {
 		enm->draw();
 	}
@@ -228,7 +261,6 @@ void PlayingState::render() {
 	for (auto gem : managems) {
 		gem->draw();
 	}
-
 	UI::Instance().draw();
 }
 
@@ -245,6 +277,7 @@ bool PlayingState::onEnter() {
 	MapManager::Instance().getMap(currentMap)->viewport(left, right);
 	TextureManager::Instance().load("asset/image/rogue2.png", "PLAYER", Game::Instance().getRenderer());
 	TextureManager::Instance().load("asset/image/bullet.png", "BULLET", Game::Instance().getRenderer());
+	TextureManager::Instance().load("asset/image/BossBullet.png", "BOSSBULLET", Game::Instance().getRenderer());
 	TextureManager::Instance().load("asset/image/EnemyBat.png", "ENEMYBAT", Game::Instance().getRenderer());
 	TextureManager::Instance().load("asset/image/EnemyZombie.png", "ENEMYZOMBIE", Game::Instance().getRenderer());
 	TextureManager::Instance().load("asset/image/Gem.png", "GEM", Game::Instance().getRenderer());
@@ -258,16 +291,21 @@ bool PlayingState::onEnter() {
 	AudioManager::Instance().loadSound("asset/audio/EnemyDestroy.mp3", "ENEMYDESTROY");
 	AudioManager::Instance().loadSound("asset/audio/Heal.mp3", "HEAL");
 	AudioManager::Instance().loadSound("asset/audio/Mana.mp3", "MANA");
+	AudioManager::Instance().loadSound("asset/audio/BossSkill.mp3", "BOSSSKILL");
+	AudioManager::Instance().loadSound("asset/audio/BossFireHit.mp3", "BOSSFIREHIT");
+	AudioManager::Instance().loadSound("asset/audio/BossIceHit.mp3", "BOSSICEHIT");
+
+	auto &factories = Game::Instance().factories();
 
 	SDL_SetRenderDrawColor(Game::Instance().getRenderer(), 227, 227, 227, 255);
 	if (!Game::Instance().middleSaved()) {
-		auto *player = (Player *)Game::Instance().factories().create("Player");
+		auto *player = (Player *)factories.create("Player");
 		player->load(LoaderParams(0 * 32, 13 * 32, 32, 64, "PLAYER"));
 		player->setCurrentRow(0);
 		player->setCurrentFrame(0);
 		this->player = player;
 	} else {
-		auto *player = (Player *)Game::Instance().factories().create("Player");
+		auto *player = (Player *)factories.create("Player");
 		player->load(LoaderParams(4 * 32, 12 * 32, 32, 64, "PLAYER"));
 		player->setCurrentRow(0);
 		player->setCurrentFrame(0);
@@ -275,7 +313,7 @@ bool PlayingState::onEnter() {
 	}
 	auto allbats = MapManager::Instance().getMap(currentMap)->getBatSpawners();
 	for (auto each : allbats) {
-		auto bat = static_cast<EnemyBat *>(Game::Instance().factories().create("EnemyBat"));
+		auto bat = static_cast<EnemyBat *>(factories.create("EnemyBat"));
 		bat->setMaxHitpoint(40);
 		bat->setHitpoint(40);
 		bat->setX(each.first * 32);
@@ -285,7 +323,7 @@ bool PlayingState::onEnter() {
 
 	auto allzombies = MapManager::Instance().getMap(currentMap)->getZombieSpawners();
 	for (auto each : allzombies) {
-		auto zombie = static_cast<EnemyZombie *>(Game::Instance().factories().create("EnemyZombie"));
+		auto zombie = static_cast<EnemyZombie *>(factories.create("EnemyZombie"));
 		zombie->setMaxHitpoint(200);
 		zombie->setHitpoint(200);
 		zombie->setX(each.first * 32);
@@ -295,7 +333,7 @@ bool PlayingState::onEnter() {
 
 	auto allhealgems = MapManager::Instance().getMap(currentMap)->getHealerSpawners();
 	for (auto each : allhealgems) {
-		auto gem = static_cast<HealGem *>(Game::Instance().factories().create("HealGem"));
+		auto gem = static_cast<HealGem *>(factories.create("HealGem"));
 		gem->setX(each.first * 32);
 		gem->setY(each.second * 32);
 		healgems.push_back(gem);
@@ -303,11 +341,22 @@ bool PlayingState::onEnter() {
 
 	auto allmanagems = MapManager::Instance().getMap(currentMap)->getManaSpawners();
 	for (auto each : allmanagems) {
-		auto gem = static_cast<ManaGem *>(Game::Instance().factories().create("ManaGem"));
+		auto gem = static_cast<ManaGem *>(factories.create("ManaGem"));
 		gem->setX(each.first * 32);
 		gem->setY(each.second * 32);
 		managems.push_back(gem);
 	}
+	
+	/// TEST
+	auto bblt = static_cast<BossFireBullet *>(factories.create("BossFireBullet"));
+	bblt->setX(20 * 32);
+	bblt->setY(10 * 32);
+	bblt->setVelocity(Vector2(-2, 0));
+	bblt->setAccelerateUpdator(
+	[](Vector2 a, int _, int __, int ___) {
+		return a;
+	});
+	addBullet(bblt);
 
 	AudioManager::Instance().playMusic("PLAYINGBGM");
 	return true;
@@ -335,3 +384,8 @@ bool PlayingState::onExit() {
 void PlayingState::addBullet(Bullet * blt) {
 	bullets.push_back(blt);
 }
+
+void PlayingState::addBullet(BossBullet * blt) {
+	boss_bullets.push_back(blt);
+}
+

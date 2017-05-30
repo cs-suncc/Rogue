@@ -32,8 +32,9 @@ bool Game::init(const char * title, int x, int y, int width, int height, int fla
 	loadAssets();
 	
 	gof.registerType("Player", new PlayerCreator());
-	gof.registerType("PlayerBullet", new PlayerBulletCreator());
-	gof.registerType("PlayerMagicBullet", new PlayerMagicBulletCreator());
+	gof.registerType("PlayerBullet", new BulletCreator<PlayerBullet>());
+	gof.registerType("PlayerMagicBullet", new BulletCreator<PlayerMagicBullet>());
+	gof.registerType("BossFireBullet", new BulletCreator<BossFireBullet>());
 	gof.registerType("EnemyBat", new EnemyBatCreator());
 	gof.registerType("EnemyZombie", new EnemyZombieCreator());
 	gof.registerType("HealGem", new HealGemCreator());
