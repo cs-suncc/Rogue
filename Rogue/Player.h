@@ -41,6 +41,9 @@ public:
 	void setX(int _x) {
 		x = _x;
 	}
+	void setY(int _y) {
+		y = _y;
+	}
 private:
 	enum PlayerState {
 		MOVING,

@@ -39,6 +39,7 @@ bool Game::init(const char * title, int x, int y, int width, int height, int fla
 	gof.registerType("EnemyZombie", new EnemyZombieCreator());
 	gof.registerType("HealGem", new HealGemCreator());
 	gof.registerType("ManaGem", new ManaGemCreator());
+	gof.registerType("Boss", new BossCreator());
 
 	AudioManager::Instance().loadSound("asset/audio/middle.mp3", "MIDDLESAVE");
 

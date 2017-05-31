@@ -115,3 +115,32 @@ public:
 		return new EnemyZombie();
 	}
 };
+
+class Boss : public Enemy {
+public:
+	Boss();
+	virtual SDL_Rect getBox() override {
+		return { x, y, 77, 84 };
+	}
+	virtual void update() override;
+	virtual std::string getType() {
+		return "Boss";
+	}
+private:
+	enum BossState {
+		STALL,
+		SUMMON,
+		FIRE,
+		ICE,
+		DYING
+	};
+	int next_frame = 0;
+	BossState currentState = STALL;
+};
+
+class BossCreator : public BaseCreator {
+public:
+	virtual GameObject *createGameObject() const override {
+		return new Boss();
+	}
+};

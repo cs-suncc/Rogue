@@ -23,6 +23,7 @@ public:
 	int getViewportLeft() {
 		return left;
 	}
+	void toBossBattle();
 private:
 	static const std::string playingID;
 	Player *player;

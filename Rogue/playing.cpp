@@ -280,6 +280,7 @@ bool PlayingState::onEnter() {
 	TextureManager::Instance().load("asset/image/BossBullet.png", "BOSSBULLET", Game::Instance().getRenderer());
 	TextureManager::Instance().load("asset/image/EnemyBat.png", "ENEMYBAT", Game::Instance().getRenderer());
 	TextureManager::Instance().load("asset/image/EnemyZombie.png", "ENEMYZOMBIE", Game::Instance().getRenderer());
+	TextureManager::Instance().load("asset/image/EnemyBoss.png", "BOSS", Game::Instance().getRenderer());
 	TextureManager::Instance().load("asset/image/Gem.png", "GEM", Game::Instance().getRenderer());
 	AudioManager::Instance().loadMusic("asset/audio/dungeon.mp3", "PLAYINGBGM");
 	AudioManager::Instance().loadSound("asset/audio/PlayerAttack.mp3", "PLAYERATTACK");
@@ -357,6 +358,7 @@ bool PlayingState::onEnter() {
 		return a;
 	});
 	addBullet(bblt);
+	toBossBattle();
 
 	AudioManager::Instance().playMusic("PLAYINGBGM");
 	return true;
@@ -389,3 +391,31 @@ void PlayingState::addBullet(BossBullet * blt) {
 	boss_bullets.push_back(blt);
 }
 
+void PlayingState::toBossBattle()
+{
+	MapManager::Instance().loadMap("BOSS", "asset/Boss.tmx");
+	currentMap = "BOSS";
+	enemys.clear();
+	bullets.clear();
+	healgems.clear();
+	managems.clear();
+	auto &factories = Game::Instance().factories();
+	auto allhealgems = MapManager::Instance().getMap(currentMap)->getHealerSpawners();
+	for (auto each : allhealgems) {
+		auto gem = static_cast<HealGem *>(factories.create("HealGem"));
+		gem->setX(each.first * 32);
+		gem->setY(each.second * 32);
+		healgems.push_back(gem);
+	}
+
+	auto allmanagems = MapManager::Instance().getMap(currentMap)->getManaSpawners();
+	for (auto each : allmanagems) {
+		auto gem = static_cast<ManaGem *>(factories.create("ManaGem"));
+		gem->setX(each.first * 32);
+		gem->setY(each.second * 32);
+		managems.push_back(gem);
+	}
+	enemys.push_back(static_cast<Boss *>(factories.create("Boss")));
+	player->setX(0);
+	player->setY(17 * 32);
+}
