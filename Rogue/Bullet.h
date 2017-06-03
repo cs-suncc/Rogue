@@ -116,7 +116,18 @@ public:
 	BossFireBullet() {
 		currentRow = 0;
 		currentFrame = 0;
-		damage = 15;
+		damage = 25;
+	}
+	virtual void update() override;
+	virtual void playHitSound() override;
+};
+
+class BossIceBullet : public BossBullet {
+public:
+	BossIceBullet() {
+		currentRow = 1;
+		currentFrame = 0;
+		damage = 5;
 	}
 	virtual void update() override;
 	virtual void playHitSound() override;

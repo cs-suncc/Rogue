@@ -10,8 +10,10 @@
 #include <iostream>
 #include <exception>
 #include <cmath>
+#include <ctime>
 
 bool Game::init(const char * title, int x, int y, int width, int height, int flags) {
+	srand(time(0));
 	if (SDL_Init(SDL_INIT_EVERYTHING) == 0) {
 		std::cout << "[Info] SDL Init Success" << std::endl;
 		//初始化游戏窗口和renderer
@@ -35,11 +37,13 @@ bool Game::init(const char * title, int x, int y, int width, int height, int fla
 	gof.registerType("PlayerBullet", new BulletCreator<PlayerBullet>());
 	gof.registerType("PlayerMagicBullet", new BulletCreator<PlayerMagicBullet>());
 	gof.registerType("BossFireBullet", new BulletCreator<BossFireBullet>());
+	gof.registerType("BossIceBullet", new BulletCreator<BossIceBullet>());
 	gof.registerType("EnemyBat", new EnemyBatCreator());
 	gof.registerType("EnemyZombie", new EnemyZombieCreator());
 	gof.registerType("HealGem", new HealGemCreator());
 	gof.registerType("ManaGem", new ManaGemCreator());
 	gof.registerType("Boss", new BossCreator());
+	gof.registerType("BossBat", new BossBatCreator());
 
 	AudioManager::Instance().loadSound("asset/audio/middle.mp3", "MIDDLESAVE");
 
@@ -96,9 +100,10 @@ bool collision(SDL_Rect r1, SDL_Rect r2)
 		inRect(r1.x, r1.y, r2) || inRect(r1.x + r1.w, r1.y, r2) ||
 		inRect(r1.x, r1.y + r1.h, r2) || inRect(r1.x + r1.w, r1.y + r1.h, r2) ||
 		inRect(r2.x, r2.y, r1) || inRect(r2.x + r2.w, r2.y, r1) ||
-		inRect(r2.x, r2.y + r2.h, r1) || inRect(r2.x + r2.w, r2.y + r1.h, r1);
-	if (inside)
+		inRect(r2.x, r2.y + r2.h, r1) || inRect(r2.x + r2.w, r2.y + r2.h, r1);
+	if (inside) {
 		return true;
+	}
 	//through
 	Vector2 x1(r1.x, r1.y + 0.5*r1.h), x2(r1.x + r1.w, r1.y + 0.5*r1.h);
 	Vector2 y1(r2.x + 0.5*r2.w, r2.y), y2(r2.x + 0.5*r2.w, r2.y + r2.h);

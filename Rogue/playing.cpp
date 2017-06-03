@@ -131,16 +131,12 @@ void PlayingState::update() {
 		Game::Instance().middleSave();
 	}
 	//处理伤害
-	SDL_Rect player_box = { player->getX() + 5, player->getY() - 20, 20, 50 };
+	SDL_Rect player_box = { player->getX() + 5, player->getY() - 19, 20, 50 };
 	if (!player->immutable()) {
 		//处理伤害 之 体术
 		for (auto enmp : enemys) {
 			if (collision(player_box, enmp->getBox())) {
-				auto damage = 0;
-				if (enmp->getType() == "EnemyZombie")
-					damage = 25;
-				else
-					damage = 20;
+				auto damage = enmp->getDamage();
 				if (player->isDefending()) {
 					player->setHitpoint(player->getHitpoint() - damage + 15);
 					UI::Instance().setUIValue("PlayerHP", player->getHitpoint());
@@ -150,18 +146,25 @@ void PlayingState::update() {
 					UI::Instance().setUIValue("PlayerHP", player->getHitpoint());
 					player->setImmutable();
 				}
+				break;
 			}
 		}
 		//处理伤害 之 魔法
 		for (auto bltp = boss_bullets.begin(); bltp != boss_bullets.end(); ) {
 			auto blt = static_cast<BossBullet *>(*bltp);
 			if (collision(player_box, blt->getBox())) {
+#ifdef _DEBUG
+				std::cerr << "Player {" << player_box.x << " " << player_box.y << " " << player_box.w << " " << player_box.h << "}\n";
+				std::cerr << "Blt {" << blt->getBox().x << " " << blt->getBox().y << " " << blt->getBox().w << " " << blt->getBox().h << "}\n" << std::endl;
+#endif
 				if (!player->isDefending()) {
 					player->setHitpoint(player->getHitpoint() - blt->getDamage());
 					UI::Instance().setUIValue("PlayerHP", player->getHitpoint());
 					blt->playHitSound();
+					player->setImmutable();
 				}
 				bltp = boss_bullets.erase(bltp);
+				break;
 			} else {
 				++bltp;
 			}
@@ -293,8 +296,11 @@ bool PlayingState::onEnter() {
 	AudioManager::Instance().loadSound("asset/audio/Heal.mp3", "HEAL");
 	AudioManager::Instance().loadSound("asset/audio/Mana.mp3", "MANA");
 	AudioManager::Instance().loadSound("asset/audio/BossSkill.mp3", "BOSSSKILL");
+	AudioManager::Instance().loadSound("asset/audio/Cast.mp3", "BOSSCAST");
 	AudioManager::Instance().loadSound("asset/audio/BossFireHit.mp3", "BOSSFIREHIT");
 	AudioManager::Instance().loadSound("asset/audio/BossIceHit.mp3", "BOSSICEHIT");
+	AudioManager::Instance().loadSound("asset/audio/SummonZombie.mp3", "SUMMONZOMBIE");
+	AudioManager::Instance().loadSound("asset/audio/SummonBat.mp3", "SUMMONBAT");
 
 	auto &factories = Game::Instance().factories();
 
@@ -389,6 +395,11 @@ void PlayingState::addBullet(Bullet * blt) {
 
 void PlayingState::addBullet(BossBullet * blt) {
 	boss_bullets.push_back(blt);
+}
+
+void PlayingState::addEnemy(Enemy * enm)
+{
+	enemys.push_back(enm);
 }
 
 void PlayingState::toBossBattle()

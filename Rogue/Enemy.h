@@ -16,6 +16,7 @@ public:
 		:velocity(0, 0), accelerate(0, 0){
 	}
 	virtual SDL_Rect getBox() = 0; //»ñÈ¡Åö×²ºÐ
+	virtual int getDamage() = 0;
 	void flip() {
 		faceflip = !faceflip;
 	}
@@ -63,6 +64,9 @@ class EnemyBat : public Enemy {
 public:
 	EnemyBat();
 	virtual SDL_Rect getBox() override;
+	virtual int getDamage() {
+		return 20;
+	}
 	virtual void update() override;
 	virtual std::string getType() override {
 		return "EnemyBat";
@@ -88,10 +92,43 @@ public:
 	}
 };
 
+class BossBat : public Enemy {
+public:
+	BossBat();
+	virtual SDL_Rect getBox() override;
+	virtual int getDamage() {
+		return 25;
+	}
+	virtual void update() override;
+	virtual std::string getType() override {
+		return "BossBat";
+	}
+private:
+	enum BatState {
+		STALL,
+		MOVING_LEFT,
+		MOVING_RIGHT,
+		DYING
+	};
+	int stalling_frame = 0;
+	int next_frame = 0;
+	BatState currentState = STALL;
+};
+
+class BossBatCreator : public BaseCreator {
+public:
+	virtual GameObject *createGameObject() const override {
+		return new BossBat();
+	}
+};
+
 class EnemyZombie : public Enemy {
 public:
 	EnemyZombie();
 	virtual SDL_Rect getBox() override;
+	virtual int getDamage() {
+		return 25;
+	}
 	virtual void update() override;
 	virtual std::string getType() {
 		return "EnemyZombie";
@@ -122,6 +159,9 @@ public:
 	virtual SDL_Rect getBox() override {
 		return { x, y, 77, 84 };
 	}
+	virtual int getDamage() {
+		return 40;
+	}
 	virtual void update() override;
 	virtual std::string getType() {
 		return "Boss";
@@ -129,12 +169,14 @@ public:
 private:
 	enum BossState {
 		STALL,
-		SUMMON,
+		SUMMONZOMBIE,
+		SUMMONBAT,
 		FIRE,
 		ICE,
 		DYING
 	};
 	int next_frame = 0;
+	int counter;
 	BossState currentState = STALL;
 };
 

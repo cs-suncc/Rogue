@@ -1,5 +1,6 @@
 #pragma once
 #include <cmath>
+#include <iostream>
 
 /// 2D向量库，用于实现游戏中的物理效果
 
@@ -102,7 +103,10 @@ public:
 	const double dot(const Vector2 &v) const {
 		return m_x*v.m_x + m_y*v.m_y;
 	}
-
+	friend std::ostream& operator<<(std::ostream &out, Vector2 v) {
+		out << "[" << v.m_x << ", " << v.m_y << "]";
+		return out;
+	}
 private:
 	double m_x;
 	double m_y;

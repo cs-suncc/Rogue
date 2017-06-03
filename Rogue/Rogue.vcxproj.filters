@@ -84,6 +84,9 @@
     <ClCompile Include="Boss.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="BossBat.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TextureManager.h">

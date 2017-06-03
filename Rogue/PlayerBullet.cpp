@@ -3,16 +3,21 @@
 #include "AudioManager.h"
 #include "MapManager.h"
 #include "playing.h"
-
+#include <cmath>
 void PlayerMagicBullet::playHitSound() {
 	AudioManager::Instance().playSound("MAGICHIT");
 }
 
 void PlayerMagicBullet::update() {
+	livetime++;
+	velocity = Vector2(velocity.getX(), 7 * cos(double(livetime) / 6 * M_PI));
 	auto _state = static_cast<PlayingState *>(Game::Instance().getGameStateMachine()->currentState());
 	auto mp = MapManager::Instance().getMap(_state->getCurrentMap());
 	if (!mp->getTile((y + 5) / 32, (_state->getViewportLeft() + x + 5) / 32)->passable())
 		destroy = true;
+	if (x < -200 || x > 2000) {
+		destroy = true;
+	}
 	Bullet::update();
 }
 

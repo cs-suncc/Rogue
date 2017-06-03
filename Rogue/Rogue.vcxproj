@@ -126,6 +126,7 @@
   <ItemGroup>
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="Boss.cpp" />
+    <ClCompile Include="BossBat.cpp" />
     <ClCompile Include="BossBullet.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="EnemyBat.cpp" />

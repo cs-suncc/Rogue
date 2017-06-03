@@ -20,6 +20,7 @@ public:
 	}
 	void addBullet(Bullet *blt);
 	void addBullet(BossBullet *blt);
+	void addEnemy(Enemy *enm);
 	int getViewportLeft() {
 		return left;
 	}

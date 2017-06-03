@@ -30,7 +30,7 @@ void UI::destroyUI(std::string id)
 #ifdef _DEBUG
 		std::cerr << "UI Entity " << id << " 不存在";
 #endif
-		throw "UI Entity " + id + " 不存在";
+		return;
 	}
 	uis.erase(id);
 }
@@ -41,7 +41,7 @@ void UI::setUIValue(std::string id, int value)
 #ifdef _DEBUG
 		std::cerr << "UI Entity " << id << " 不存在";
 #endif
-		throw "UI Entity " + id + " 不存在";
+		return;
 	}
 	uis[id]->value = value;
 }
@@ -52,7 +52,7 @@ void UI::setUIValueMax(std::string id, int value_max)
 #ifdef _DEBUG
 		std::cerr << "UI Entity " << id << " 不存在";
 #endif
-		throw "UI Entity " + id + " 不存在";
+		return;
 	}
 	uis[id]->value_max = value_max;
 }
@@ -63,7 +63,7 @@ int UI::getUIValue(std::string id)
 #ifdef _DEBUG
 		std::cerr << "UI Entity " << id << " 不存在";
 #endif
-		throw "UI Entity " + id + " 不存在";
+		return -1;
 	}
 	return uis[id]->value;
 }
@@ -74,7 +74,7 @@ void UI::setUIBarColor(std::string id, Uint8 r, Uint8 g, Uint8 b)
 #ifdef _DEBUG
 		std::cerr << "UI (Bar)Entity " << id << " 不存在";
 #endif
-		throw "UI (Bar)Entity " + id + " 不存在";
+		return;
 	}
 	auto bar = static_cast<UIBar *>(uis[id]);
 	bar->r = r;
