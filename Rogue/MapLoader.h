@@ -21,12 +21,15 @@ public:
 			healer = true;
 		if (type == 4)
 			mana = true;
+		if (type == 5)
+			next = true;
 	}
 	bool passable() { return pass; }
 	bool spawnableBat() { return bat; }
 	bool spawnableZombie() { return zombie; }
 	bool spawnableHealer() { return healer; }
 	bool spawnableMana() { return mana; }
+	bool nextgate() { return next; }
 	void setPass(bool p) { pass = p; }
 private:
 	int id;
@@ -35,6 +38,7 @@ private:
 	bool zombie = false;
 	bool healer = false;
 	bool mana = false;
+	bool next = false;
 };
 
 class Tileset {

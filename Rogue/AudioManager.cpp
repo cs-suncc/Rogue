@@ -22,6 +22,7 @@ void AudioManager::initAudio() {
 	Mix_OpenAudio(44100, AUDIO_S16SYS, 2, 1024);
 	Mix_AllocateChannels(32);
 	Mix_Volume(-1, 32);
+	Mix_VolumeMusic(80);
 }
 
 bool AudioManager::loadMusic(std::string file, std::string id) {

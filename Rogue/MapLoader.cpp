@@ -35,6 +35,9 @@ Map::Map(std::string map): map(map) {
 		} else if (pn == "mana") {
 			pass = true;
 			_tile->addTile(atoi(p->Attribute("id")), pass, 4);
+		} else if (pn == "next") {
+			pass = true;
+			_tile->addTile(atoi(p->Attribute("id")), pass, 5);
 		} else {
 			pass = (pv == "true");
 			_tile->addTile(atoi(p->Attribute("id")), pass);
