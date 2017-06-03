@@ -9,8 +9,8 @@ Boss::Boss() {
 	currentRow = 0;
 	currentFrame = 0;
 	next_frame = 0;
-	hitpoint_max = 50;
-	hitpoint = 50;
+	hitpoint_max = 4000;
+	hitpoint = 4000;
 	counter = 0;
 }
 

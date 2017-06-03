@@ -371,8 +371,12 @@ bool PlayingState::onEnter() {
 		gem->setY(each.second * 32);
 		managems.push_back(gem);
 	}
-
-	AudioManager::Instance().playMusic("PLAYINGBGM");
+	
+	if (Game::Instance().bossSaved()) {
+		toBossBattle();
+	} else {
+		AudioManager::Instance().playMusic("PLAYINGBGM");
+	}
 	return true;
 }
 
@@ -410,6 +414,7 @@ void PlayingState::addEnemy(Enemy * enm)
 
 void PlayingState::toBossBattle()
 {
+	Game::Instance().bossSave();
 	MapManager::Instance().loadMap("BOSS", "asset/Boss.tmx");
 	currentMap = "BOSS";
 	MapManager::Instance().getMap(currentMap)->viewport(0, 30 * 32);

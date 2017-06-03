@@ -53,6 +53,9 @@ public:
 	bool middleSaved() {
 		return into_middle;
 	}
+	bool bossSaved() {
+		return into_boss;
+	}
 	void middleSave();
 	void bossSave();
 };
