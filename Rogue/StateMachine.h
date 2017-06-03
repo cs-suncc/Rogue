@@ -8,6 +8,7 @@ public:
 	void pushState(GameState *state);
 	void changeState(GameState *state);
 	void popState();
+	void popState(int tilldown);
 	void update();
 	void render();
 	GameState *currentState();

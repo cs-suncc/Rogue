@@ -30,6 +30,12 @@ void StateMachine::popState()
 	}
 }
 
+void StateMachine::popState(int tilldown){
+	while (_stack.size() > 1) {
+		popState();
+	}
+}
+
 void StateMachine::update()
 {
 	if (!_stack.empty())

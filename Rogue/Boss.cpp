@@ -9,12 +9,16 @@ Boss::Boss() {
 	currentRow = 0;
 	currentFrame = 0;
 	next_frame = 0;
-	hitpoint_max = 5000;
-	hitpoint = 5000;
+	hitpoint_max = 50;
+	hitpoint = 50;
 	counter = 0;
 }
 
 void Boss::update() {
+	if (hitpoint <= 0) {
+		dying = true;
+		return;
+	}
 	int mx = x + width / 2 - 16;
 	int my = y + height / 2 - 16;
 	auto _state = static_cast<PlayingState *>(Game::Instance().getGameStateMachine()->currentState());

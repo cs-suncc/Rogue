@@ -147,15 +147,10 @@ void InputHandler::update() {
 	else
 		joystickButtonsState[0][XBoxInputNodes::BUTTON_B] = false;
 	
-	if (keystates[SDL_SCANCODE_RETURN])
+	if (keystates[SDL_SCANCODE_ESCAPE])
 		joystickButtonsState[0][XBoxInputNodes::BUTTON_START] = true;
 	else
 		joystickButtonsState[0][XBoxInputNodes::BUTTON_START] = false;
-
-	if (keystates[SDL_SCANCODE_ESCAPE])
-		joystickButtonsState[0][XBoxInputNodes::BUTTON_BACK] = true;
-	else
-		joystickButtonsState[0][XBoxInputNodes::BUTTON_BACK] = false;
 }
 
 void InputHandler::clean() {

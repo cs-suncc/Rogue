@@ -1,5 +1,8 @@
 #include <iostream>
 #include "playing.h"
+#include "pause.h"
+#include "gameover.h"
+#include "win.h"
 #include "TextureManager.h"
 #include "InputHandler.h"
 #include "Game.h"
@@ -17,14 +20,12 @@ void PlayingState::update() {
 	static int dying_noupdate = 0;
 	static bool on_counting = false;
 	InputHandler::Instance().update();
-	if (InputHandler::Instance().buttonState(0, XBoxInputNodes::BUTTON_BACK)) {
-		Game::Instance().getGameStateMachine()->popState();
-		AudioManager::Instance().playMusic("TITLEBGM");
+	if (InputHandler::Instance().buttonState(0, XBoxInputNodes::BUTTON_START)) {
+		Game::Instance().getGameStateMachine()->pushState(new PauseState());
 		return;
 	}
 	if (player->getHitpoint() <= 0) {
-		Game::Instance().getGameStateMachine()->popState();
-		AudioManager::Instance().playMusic("TITLEBGM");
+		Game::Instance().getGameStateMachine()->pushState(new GameOverState());
 		return;
 	}
 
@@ -36,8 +37,7 @@ void PlayingState::update() {
 		player->update();
 	}
 	catch(std::exception e) {
-		Game::Instance().getGameStateMachine()->popState();
-		AudioManager::Instance().playMusic("TITLEBGM");
+		Game::Instance().getGameStateMachine()->pushState(new GameOverState());
 		return;
 	}
 	for (auto gem : healgems) {
@@ -62,7 +62,17 @@ void PlayingState::update() {
 			++blt;
 		}
 	}
-	for (auto enm = enemys.begin(); enm != enemys.end();) {
+	auto enm = enemys.begin();
+	if (currentMap == "BOSS") {
+		(*enm)->update();
+		enm = enemys.begin();
+		if ((*enm)->perish()) {
+			Game::Instance().getGameStateMachine()->pushState(new WinState());
+			return;
+		}
+		++enm;
+	}
+	for (;enm != enemys.end();) {
 		(*enm)->update();
 		if ((*enm)->perish()) {
 			enm = enemys.erase(enm);
@@ -325,6 +335,7 @@ bool PlayingState::onEnter() {
 		player->setCurrentFrame(0);
 		this->player = player;
 	}
+
 	auto allbats = MapManager::Instance().getMap(currentMap)->getBatSpawners();
 	for (auto each : allbats) {
 		auto bat = static_cast<EnemyBat *>(factories.create("EnemyBat"));

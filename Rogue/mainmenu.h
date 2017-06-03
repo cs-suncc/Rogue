@@ -1,5 +1,6 @@
 #pragma once
 #include "GameState.h"
+#include "SDLGameObject.h"
 
 class MainMenuState : public GameState {
 public:
@@ -14,4 +15,8 @@ public:
 private:
 	static const std::string menuID;
 	std::vector<GameObject *> gameObjects;
+	std::vector<SDLGameObject *> mainmenubuttons;
+	GameObject *title;
+	GameObject *help;
+	int selected = 0;
 };

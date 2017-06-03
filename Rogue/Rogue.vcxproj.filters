@@ -87,6 +87,15 @@
     <ClCompile Include="BossBat.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="pause.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="gameover.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="win.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TextureManager.h">
@@ -147,6 +156,15 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Gem.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="pause.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="gameover.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="win.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

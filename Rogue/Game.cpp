@@ -71,7 +71,17 @@ void Game::render() {
 }
 
 void Game::update() {
-	gameStateMachine->update();
+	try {
+		gameStateMachine->update();
+	}
+	catch (std::exception e) {
+		if (std::string("resume") == e.what()) {
+			gameStateMachine->popState();
+		} else {
+			gameStateMachine->popState(1);
+			AudioManager::Instance().playMusic("TITLEBGM");
+		}
+	}
 }
 
 void Game::clean() {

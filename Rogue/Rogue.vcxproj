@@ -134,12 +134,14 @@
     <ClCompile Include="functional_test.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObjectFactory.cpp" />
+    <ClCompile Include="gameover.cpp" />
     <ClCompile Include="Gem.cpp" />
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mainmenu.cpp" />
     <ClCompile Include="MapLoader.cpp" />
     <ClCompile Include="MapManager.cpp" />
+    <ClCompile Include="pause.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerBullet.cpp" />
     <ClCompile Include="playing.cpp" />
@@ -148,6 +150,7 @@
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="UI.cpp" />
     <ClCompile Include="UIBar.cpp" />
+    <ClCompile Include="win.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioManager.h" />
@@ -156,11 +159,13 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameObjectFactory.h" />
+    <ClInclude Include="gameover.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="Gem.h" />
     <ClInclude Include="mainmenu.h" />
     <ClInclude Include="MapLoader.h" />
     <ClInclude Include="MapManager.h" />
+    <ClInclude Include="pause.h" />
     <ClInclude Include="playing.h" />
     <ClInclude Include="StateMachine.h" />
     <ClInclude Include="InputHandler.h" />
@@ -170,6 +175,7 @@
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="UI.h" />
     <ClInclude Include="Vector2.h" />
+    <ClInclude Include="win.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
